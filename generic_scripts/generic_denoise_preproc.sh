@@ -16,7 +16,7 @@ PE_dir=$6
 results_path="${resultsDir}/${sub}/DWI_processing"
 mkdir -p $results_path
 
-#files to be created
+#files to be created:
 dwi_raw_mif="$results_path/DWI_raw.mif"
 dwi_denoised="$results_path/DWI_denoised.mif"
 dwi_degibbsed="$results_path/DWI_degibbsed.mif"
@@ -42,7 +42,6 @@ dwipreproc -force -rpe_none -pe_dir $PE_dir -eddy_options " --data_is_shelled " 
 #rm $dwi_raw_mif
 #rm $dwi_denoised
 #rm $dwi_degibbsed
-
 
 # to be implemented: dwi distortion correction
 # nonlinear reg with ANTS
