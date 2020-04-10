@@ -41,6 +41,7 @@ dwipreproc -force -rpe_none -pe_dir $PE_dir -eddy_options " --data_is_shelled " 
 # optionally remove intermediate output files
 #rm $dwi_raw_mif
 #rm $dwi_denoised
+#rm $dwi_degibbsed
 
 
 # to be implemented: dwi distortion correction
