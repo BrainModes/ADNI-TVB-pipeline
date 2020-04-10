@@ -42,6 +42,3 @@ dwipreproc -force -rpe_none -pe_dir $PE_dir -eddy_options " --data_is_shelled " 
 #rm $dwi_raw_mif
 #rm $dwi_denoised
 #rm $dwi_degibbsed
-
-# to be implemented: dwi distortion correction
-# nonlinear reg with ANTS
