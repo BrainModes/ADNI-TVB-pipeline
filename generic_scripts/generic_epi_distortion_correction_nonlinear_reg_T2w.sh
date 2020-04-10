@@ -24,7 +24,7 @@ T2_image=$HCP_results/T2w_acpc_dc_restore.nii.gz
 T2_image_brain=$HCP_results/T2w_acpc_dc_restore_brain.nii.gz
 
 BiasField=$HCP_results/"BiasField_acpc_dc.nii.gz"
-BiasField=$DWI_path/"BiasField_acpc_dc_in_DWI.nii.gz"
+BiasField_in_DWI=$DWI_path/"BiasField_acpc_dc_in_DWI.nii.gz"
 
 DWI_meanB0_mif=$DWI_path/DWI_meanb0.mif
 DWI_meanB0=$DWI_path/DWI_meanb0.nii.gz
@@ -46,20 +46,29 @@ tmp_bval=$DWI_path/tmp_bval.bval
 
 # get meanB0 image and create brainmask
 # convert files to Nifti for the other tools, but save bvecs and bvals to add them later
+
+# extract all b0 volumes from DWI scan. Average them. Convert to nifti.
 dwiextract $DWI_preprocessed_mif - -bzero | mrmath - mean $DWI_meanB0_mif -axis 3 -force
 mrconvert $DWI_meanB0_mif $DWI_meanB0 -force
+
+# create whole-brain mask from DWI scan, and convert to nifti
 dwi2mask $DWI_preprocessed_mif $DWI_brainmask_mif -force
 mrconvert $DWI_brainmask_mif $DWI_brainmask -force
+
+# mask dwi_meanB0 image & DWI scan
+fslmaths $DWI_meanB0 -mas $DWI_brainmask $DWI_meanB0_brain
+fslmaths $DWI_preprocessed -mas $DWI_brainmask $DWI_preprocessed_masked
+
+#export diffusion-weighting gradient info to FSl-format bval/bvec files
 mrconvert $DWI_preprocessed_mif $DWI_preprocessed -force -export_grad_fsl $tmp_bvec $tmp_bval
 
-# linear register T2 to DWI
+# linear register T2 to DWI: create transform & inverse
 flirt -in $DWI_meanB0 -ref $T2_image -omat $DWI_path/EPItoT2.mat -dof 6
 convert_xfm -omat $DWI_path/T2toEPI.mat -inverse $DWI_path/EPItoT2.mat
+
+#apply transfrom: Put T2 into DWI space. Put biasfield in DWI space.
 flirt -in $T2_image_brain -ref $DWI_meanB0 -init $DWI_path/T2toEPI.mat -applyxfm -out $T2_in_DWI_brain
 flirt -in $BiasField -ref $DWI_meanB0 -init $DWI_path/T2toEPI.mat -applyxfm -out $BiasField_in_DWI
-
-# mask dwi_meanB0 image
-fslmaths $DWI_meanB0 -mas $DWI_brainmask $DWI_meanB0_brain
 
 # set number of threads to use for computation
 ORIGINALNUMBEROFTHREADS=${ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS}
@@ -75,7 +84,6 @@ antsRegistration --dimensionality 3 --float 0 --output [$DWI_path/CC_onedir,$DWI
     --shrink-factors 8x4x2x1 --smoothing-sigmas 3x2x1x0vox -g $PE_dir -v
 
 # apply warp to DWI images
-fslmaths $DWI_preprocessed -mas $DWI_brainmask $DWI_preprocessed_masked
 
 # collapse the transformations to a displacement field
 echo "collapse the transformations to a displacement field"
@@ -102,7 +110,6 @@ antsApplyTransforms -d 4 -o $DWI_preprocessed_masked_undistorted \
   -t $DWI_path/4DCollapsedWarp.nii.gz  \
   -r ${T2_in_DWI_brain}_4D.nii.gz \
   -i $DWI_preprocessed_masked
-
 
 # return to original number of threads
 ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=$ORIGINALNUMBEROFTHREADS
