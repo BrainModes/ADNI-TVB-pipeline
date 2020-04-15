@@ -78,7 +78,7 @@ export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS
 # antsregistration SyN, constrained in PE direction
 echo "antsregistration SyN, constrained in PE direction"
 antsRegistration --dimensionality 3 --float 0 --output [$DWI_path/CC_onedir,$DWI_path/CC_onedirWarped.nii.gz] \
-    --interpolation Linear --winsorize-image-intensities '[0.005,0.995]' --use-histogram-matching 0 \
+    --interpolation Linear --winsorize-image-intensities '[0.005,0.995]' --use-histogram-matching 1 \
     --initial-moving-transform [$T2_in_DWI_brain,$DWI_meanB0_brain,1] \
     --transform 'SyN[0.1,0.5,0]' --metric CC[$T2_in_DWI_brain,$DWI_meanB0_brain,1,4] --convergence '[200x150x150x80,1e-6,10]' \
     --shrink-factors 8x4x2x1 --smoothing-sigmas 3x2x1x0vox -g $PE_dir -v
