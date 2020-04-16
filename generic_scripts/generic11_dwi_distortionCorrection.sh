@@ -43,6 +43,8 @@ tmp_bvec=$DWI_path/tmp_bvec.bvec
 tmp_bval=$DWI_path/tmp_bval.bval
 
 #PROCESSING
+echo "START epi distortion correction"
+date +"Date : %d/%m/%Y Time : %H.%M.%S"
 
 echo "get meanB0 image and create brainmask"
 # convert files to Nifti for the other tools, but save bvecs and bvals to add them later
@@ -78,17 +80,24 @@ export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS
 
 echo "antsregistration SyN, constrained in PE direction"
 # antsregistration SyN, constrained in PE direction
-antsRegistration --dimensionality 3 --float 0 --output [$DWI_path/CC_onedir,$DWI_path/CC_onedirWarped.nii.gz] \
+antsRegistration --dimensionality 3 --float 0 --output [${DWI_path}/CC_onedir,${DWI_path}/CC_onedirWarped.nii.gz] \
     --interpolation Linear --winsorize-image-intensities '[0.005,0.995]' --use-histogram-matching 1 \
-    --initial-moving-transform [$T2_in_DWI_brain,$DWI_meanB0_brain,1] \
-    --transform 'SyN[0.1,0.5,0]' --metric CC[$T2_in_DWI_brain,$DWI_meanB0_brain,1,4] --convergence '[200x150x150x80,1e-6,10]' \
+    --initial-moving-transform [${T2_in_DWI_brain},${DWI_meanB0_brain},1] \
+    --transform 'SyN[0.1,0.5,0]' --metric CC[${T2_in_DWI_brain},${DWI_meanB0_brain},1,4] --convergence '[200x150x150x80,1e-6,10]' \
     --shrink-factors 8x4x2x1 --smoothing-sigmas 3x2x1x0vox -g $PE_dir -v
+
+
+#antsRegistration --dimensionality 3 --float 0 --output [./CC_onedir, ./CC_onedirWarped.nii.gz] \
+#    --interpolation Linear --winsorize-image-intensities '[0.005,0.995]' --use-histogram-matching 1 \
+#    --initial-moving-transform [T2_in_DWI_brain.nii.gz,DWI_meanb0_brain.nii.gz,1] \
+#    --transform 'SyN[0.1,0.5,0]' --metric CC[T2_in_DWI_brain.nii.gz,DWI_meanb0_brain.nii.gz,1,4] --convergence '[200x150x150x80,1e-6,10]' \
+#    --shrink-factors 8x4x2x1 --smoothing-sigmas 3x2x1x0vox -g "0x1x0" -v
 
 echo "apply warp to DWI images"
 # collapse the transformations to a displacement field
 echo "collapse the transformations to a displacement field"
-antsApplyTransforms -d 3 -o [$DWI_path/CollapsedWarp.nii.gz,1] \
-  -t $DWI_path/CC_onedir1Warp.nii.gz -t $DWI_path/CC_onedir0GenericAffine.mat \
+antsApplyTransforms -d 3 -o [${DWI_path}/CollapsedWarp.nii.gz,1] \
+  -t ${DWI_path}/CC_onedir1Warp.nii.gz -t ${DWI_path}/CC_onedir0GenericAffine.mat \
   -r $T2_in_DWI_brain
 
 
@@ -98,8 +107,8 @@ tr=`PrintHeader $DWI_preprocessed_masked | grep "Voxel Spac" | cut -d ',' -f 4 |
 
 # replicate warp and template image to 4D for warping the whole DWI image
 echo "replicate warp and template image to 4D for warping the whole DWI image"
-ImageMath 3 $DWI_path/4DCollapsedWarp.nii.gz ReplicateDisplacement \
-            $DWI_path/CollapsedWarp.nii.gz $hislice $tr 0
+ImageMath 3 ${DWI_path}/4DCollapsedWarp.nii.gz ReplicateDisplacement \
+            ${DWI_path}/CollapsedWarp.nii.gz $hislice $tr 0
 
 ImageMath 3 ${T2_in_DWI_brain}_4D.nii.gz ReplicateImage \
             ${T2_in_DWI_brain} $hislice $tr 0
@@ -107,7 +116,7 @@ ImageMath 3 ${T2_in_DWI_brain}_4D.nii.gz ReplicateImage \
 # apply to original epi
 echo " apply to original epi"
 antsApplyTransforms -d 4 -o $DWI_preprocessed_masked_undistorted \
-  -t $DWI_path/4DCollapsedWarp.nii.gz  \
+  -t ${DWI_path}/4DCollapsedWarp.nii.gz  \
   -r ${T2_in_DWI_brain}_4D.nii.gz \
   -i $DWI_preprocessed_masked
 
@@ -120,7 +129,7 @@ export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS
 echo "intensity correction by multiplying the warped image with the jacobian of the warp field"
 if [[ $UseJacobian == "True" ]]
 then
-    CreateJacobianDeterminantImage 3 CollapsedWarp.nii.gz $DWI_path/Jacobian.nii.gz
+    CreateJacobianDeterminantImage 3 CollapsedWarp.nii.gz ${DWI_path}/Jacobian.nii.gz
     if [[ "$UseBiasField" == "True" ]]
 
     then
@@ -143,3 +152,6 @@ mrconvert -force -fslgrad $tmp_bvec $tmp_bval $DWI_preprocessed_masked_undistort
 
 # clean up
 rm $tmp_bval $tmp_bvec $DWI_preprocessed $DWI_preprocessed_masked_undistorted $DWI_brainmask $DWI_meanB0
+
+echo "END epi distortion correction"
+date +"Date : %d/%m/%Y Time : %H.%M.%S"
