@@ -27,7 +27,7 @@ PRINTCOM=""
 #QUEUE="-q veryshort.q"
 
 
-########################################## INPUTS ########################################## 
+########################################## INPUTS ##########################################
 
 #Scripts called by this script do assume they run on the outputs of the FreeSurfer Pipeline
 
@@ -43,7 +43,7 @@ SubcorticalGrayLabels="${HCPPIPEDIR_Config}/FreeSurferSubcorticalLabelTableLut.t
 FreeSurferLabels="${HCPPIPEDIR_Config}/FreeSurferAllLut.txt"
 ReferenceMyelinMaps="${HCPPIPEDIR_Templates}/standard_mesh_atlases/Conte69.MyelinMap_BC.164k_fs_LR.dscalar.nii"
 # RegName="MSMSulc" #MSMSulc is recommended, if binary is not available use FS (FreeSurfer)
-RegName="MSMSulc" 
+RegName="MSMSulc"
 
 ${HCPPIPEDIR}/PostFreeSurfer/PostFreeSurferPipeline.sh \
       --path="$StudyFolder" \
@@ -60,4 +60,4 @@ ${HCPPIPEDIR}/PostFreeSurfer/PostFreeSurferPipeline.sh \
       --printcom=$PRINTCOM
 
 # deactivate the python environment
-source deactivate
+conda deactivate

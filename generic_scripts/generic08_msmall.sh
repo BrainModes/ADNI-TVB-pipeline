@@ -17,7 +17,7 @@ EnvironmentScript="/fast/work/groups/ag_ritter/MR_processing/HCP_pipeline/Pipeli
 
 # Requirements for this script
 #  installed versions of: FSL (version 5.0.6)
-#  environment: FSLDIR , HCPPIPEDIR , CARET7DIR 
+#  environment: FSLDIR , HCPPIPEDIR , CARET7DIR
 
 #Set up pipeline environment variables and software
 source ${EnvironmentScript}
@@ -26,7 +26,7 @@ source ${EnvironmentScript}
 echo "$@"
 
 
-########################################## INPUTS ########################################## 
+########################################## INPUTS ##########################################
 
 #Scripts called by this script do assume they run on the results of the HCP minimal preprocesing pipelines from Q2
 
@@ -57,5 +57,4 @@ ${HCPPIPEDIR}/MSMAll/MSMAllPipeline.sh \
   --input-registration-name=${InRegName} \
   --matlab-run-mode=${MatlabMode}
 
-
-
+conda deactivate

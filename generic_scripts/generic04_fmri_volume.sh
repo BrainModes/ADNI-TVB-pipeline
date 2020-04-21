@@ -11,7 +11,7 @@
 conda activate /fast/work/groups/ag_ritter//MR_processing/HCP_pipeline/HCP_python2.7
 
 StudyFolder=$1 # Location of Subject folders (named by subjectID)
-Subject=$2 
+Subject=$2
 EnvironmentScript="/fast/work/groups/ag_ritter//MR_processing/HCP_pipeline/Pipeline/Pipelines-3.24.0/Examples/Scripts/SetUpHCPPipeline.sh" # Pipeline environment script
 
 #Set up pipeline environment variables and software
@@ -23,12 +23,12 @@ echo "  ${fMRIName}"
 UnwarpDir=$3
 fMRITimeSeries=$4
 fMRISBRef="NONE" #A single band reference image (SBRef) is recommended if using multiband, set to NONE if you want to use the first volume of the timeseries for motion correction
-DwellTime=$5 #Echo Spacing or Dwelltime of fMRI image, set to NONE if not used. Dwelltime = 1/(BandwidthPerPixelPhaseEncode * # of phase encoding samples): DICOM field (0019,1028) = BandwidthPerPixelPhaseEncode, DICOM field (0051,100b) AcquisitionMatrixText first value (# of phase encoding samples).  On Siemens, iPAT/GRAPPA factors have already been accounted for.   
+DwellTime=$5 #Echo Spacing or Dwelltime of fMRI image, set to NONE if not used. Dwelltime = 1/(BandwidthPerPixelPhaseEncode * # of phase encoding samples): DICOM field (0019,1028) = BandwidthPerPixelPhaseEncode, DICOM field (0051,100b) AcquisitionMatrixText first value (# of phase encoding samples).  On Siemens, iPAT/GRAPPA factors have already been accounted for.
 DistortionCorrection=$6 # FIELDMAP, SiemensFieldMap, GeneralElectricFieldMap, or TOPUP: distortion correction is required for accurate processing
 # The MagnitudeInputName variable should be set to a 4D magitude volume with two 3D timepoints
 MagnitudeInputName=$7
 # The PhaseInputName variable should be set to a 3D phase difference
-PhaseInputName=$8 
+PhaseInputName=$8
 DeltaTE=$9 #2.46ms for 3T, 1.02ms for 7T, set to NONE if using TOPUP
 FinalFMRIResolution=${10} #Target final resolution of fMRI data. 2mm is recommended for 3T HCP data, 1.6mm for 7T HCP data (i.e. should match acquired resolution).  Use 2.0 or 1.0 to avoid standard FSL templates
 
@@ -98,4 +98,4 @@ echo ". ${EnvironmentScript}"
 
 
 
-source deactivate
+conda deactivate

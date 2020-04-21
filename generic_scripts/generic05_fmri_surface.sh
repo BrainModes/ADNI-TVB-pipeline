@@ -11,7 +11,7 @@
 conda activate /fast/work/groups/ag_ritter/MR_processing/HCP_pipeline/HCP_python2.7
 
 StudyFolder=$1 # Location of Subject folders (named by subjectID)
-Subject=$2 
+Subject=$2
 EnvironmentScript="/fast/work/groups/ag_ritter/MR_processing/HCP_pipeline/Pipeline/Pipelines-3.24.0/Examples/Scripts/SetUpHCPPipeline.sh" # Pipeline environment script
 FinalfMRIResolution=$3 #Needs to match what is in fMRIVolume, i.e. 2mm for 3T HCP data and 1.6mm for 7T HCP data
 
@@ -28,7 +28,7 @@ echo "$@"
 PRINTCOM=""
 #PRINTCOM="echo"
 
-########################################## INPUTS ########################################## 
+########################################## INPUTS ##########################################
 
 #Scripts called by this script do assume they run on the outputs of the FreeSurfer Pipeline
 
@@ -38,7 +38,7 @@ PRINTCOM=""
 fMRIName="Restingstate"
 echo "  ${fMRIName}"
 LowResMesh="32" #Needs to match what is in PostFreeSurfer, 32 is on average 2mm spacing between the vertices on the midthickness
-SmoothingFWHM="2" #Recommended to be roughly the grayordinates spacing, i.e 2mm on HCP data 
+SmoothingFWHM="2" #Recommended to be roughly the grayordinates spacing, i.e 2mm on HCP data
 GrayordinatesResolution="2" #Needs to match what is in PostFreeSurfer. 2mm gives the HCP standard grayordinates space with 91282 grayordinates.  Can be different from the FinalfMRIResolution (e.g. in the case of HCP 7T data at 1.6mm)
 # RegName="MSMSulc" #MSMSulc is recommended, if binary is not available use FS (FreeSurfer)
 RegName="MSMSulc"
@@ -68,4 +68,4 @@ echo "set -- --path=$StudyFolder \
 echo ". ${EnvironmentScript}"
 
 # deactivate the python environment
-source deactivate
+conda deactivate

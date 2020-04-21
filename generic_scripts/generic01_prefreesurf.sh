@@ -36,12 +36,12 @@ Mag2=$7 # second Magnitude Image
 MagnitudeInputName=$8 # concatenation done with fslmerge
 fslmerge -t $8 $6 $7
 
-# The PhaseInputName variable should be set to a 3D phase difference 
-PhaseInputName=$9 
+# The PhaseInputName variable should be set to a 3D phase difference
+PhaseInputName=$9
 
 TE=${10}
-T1wSampleSpacing=${11} 
-T2wSampleSpacing=${12} 
+T1wSampleSpacing=${11}
+T2wSampleSpacing=${12}
 UnwarpDir=${13}
 
 
@@ -49,7 +49,7 @@ GradientDistortionCoeffs="NONE" # Set to NONE to skip gradient distortion correc
 
 # set GE and Spin Echo fieldmap options to "NONE"
 GEB0InputName="NONE"
-SpinEchoPhaseEncodeNegative="NONE" 
+SpinEchoPhaseEncodeNegative="NONE"
 SpinEchoPhaseEncodePositive="NONE"
 DwellTime="NONE" # DwellTime of Spin Echo fieldmap
 SEUnwarpDir="NONE"
@@ -60,23 +60,23 @@ TopupConfig="NONE"
 # Hires T1w MNI template
 T1wTemplate="${HCPPIPEDIR_Templates}/MNI152_T1_1mm.nii.gz"
 # Hires brain extracted MNI template
-T1wTemplateBrain="${HCPPIPEDIR_Templates}/MNI152_T1_1mm_brain.nii.gz" 
+T1wTemplateBrain="${HCPPIPEDIR_Templates}/MNI152_T1_1mm_brain.nii.gz"
 # Lowres T1w MNI template
-T1wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T1_2mm.nii.gz" 
+T1wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T1_2mm.nii.gz"
 # Hires T2w MNI Template
-T2wTemplate="${HCPPIPEDIR_Templates}/MNI152_T2_1mm.nii.gz" 
+T2wTemplate="${HCPPIPEDIR_Templates}/MNI152_T2_1mm.nii.gz"
 # Hires T2w brain extracted MNI Template
-T2wTemplateBrain="${HCPPIPEDIR_Templates}/MNI152_T2_1mm_brain.nii.gz" 
+T2wTemplateBrain="${HCPPIPEDIR_Templates}/MNI152_T2_1mm_brain.nii.gz"
 # Lowres T2w MNI Template
-T2wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T2_2mm.nii.gz" 
+T2wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T2_2mm.nii.gz"
 # Hires MNI brain mask template
 TemplateMask="${HCPPIPEDIR_Templates}/MNI152_T1_1mm_brain_mask.nii.gz"
-# Lowres MNI brain mask template		
-Template2mmMask="${HCPPIPEDIR_Templates}/MNI152_T1_2mm_brain_mask_dil.nii.gz" 
+# Lowres MNI brain mask template
+Template2mmMask="${HCPPIPEDIR_Templates}/MNI152_T1_2mm_brain_mask_dil.nii.gz"
 # BrainSize in mm, 150 for humans
-BrainSize="150" 
+BrainSize="150"
 # FNIRT 2mm T1w Config
-FNIRTConfig="${HCPPIPEDIR_Config}/T1_2_MNI152_2mm.cnf" 
+FNIRTConfig="${HCPPIPEDIR_Config}/T1_2_MNI152_2mm.cnf"
 
 
 # If PRINTCOM is not a null or empty string variable, then
@@ -118,4 +118,4 @@ ${HCPPIPEDIR}/PreFreeSurfer/PreFreeSurferPipeline.sh \
 
 
 # deactivate the python environment
-source deactivate
+conda deactivate
