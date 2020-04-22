@@ -43,32 +43,32 @@ tmp_bvec=$DWI_path/tmp_bvec.bvec
 tmp_bval=$DWI_path/tmp_bval.bval
 
 #PROCESSING
-echo "START epi distortion correction"
-date +"Date : %d/%m/%Y Time : %H.%M.%S"
+echo "START epi distortion correction" | tee -a /dev/stderr
+date +"Date : %d/%m/%Y Time : %H.%M.%S" | tee -a /dev/stderr
 
-echo "get meanB0 image and create brainmask"
+echo "get meanB0 image and create brainmask" | tee -a /dev/stderr
 # convert files to Nifti for the other tools, but save bvecs and bvals to add them later
 
 # extract all b0 volumes from DWI scan. Average them. Convert to nifti.
 dwiextract $DWI_preprocessed_mif - -bzero | mrmath - mean $DWI_meanB0_mif -axis 3 -force
 mrconvert $DWI_meanB0_mif $DWI_meanB0 -force
 
-echo "create whole-brain mask from DWI scan, and convert to nifti"
+echo "create whole-brain mask from DWI scan, and convert to nifti" | tee -a /dev/stderr
 dwi2mask $DWI_preprocessed_mif $DWI_brainmask_mif -force
 mrconvert $DWI_brainmask_mif $DWI_brainmask -force
 
-echo "export diffusion-weighting gradient info to FSl-format bval/bvec files"
+echo "export diffusion-weighting gradient info to FSl-format bval/bvec files" | tee -a /dev/stderr
 mrconvert $DWI_preprocessed_mif $DWI_preprocessed -force -export_grad_fsl $tmp_bvec $tmp_bval
 
-echo "mask dwi_meanB0 image & DWI scan"
+echo "mask dwi_meanB0 image & DWI scan" | tee -a /dev/stderr
 fslmaths $DWI_meanB0 -mas $DWI_brainmask $DWI_meanB0_brain
 fslmaths $DWI_preprocessed -mas $DWI_brainmask $DWI_preprocessed_masked
 
-echo "linear register T2 to DWI: create transform & inverse"
+echo "linear register T2 to DWI: create transform & inverse" | tee -a /dev/stderr
 flirt -in $DWI_meanB0 -ref $T2_image -omat $DWI_path/EPItoT2.mat -dof 6
 convert_xfm -omat $DWI_path/T2toEPI.mat -inverse $DWI_path/EPItoT2.mat
 
-echo "apply transfrom to T2 image and bias field."
+echo "apply transfrom to T2 image and bias field." | tee -a /dev/stderr
 # Put T2 into DWI space. Put biasfield in DWI space.
 flirt -in $T2_image_brain -ref $DWI_meanB0 -init $DWI_path/T2toEPI.mat -applyxfm -out $T2_in_DWI_brain
 flirt -in $BiasField -ref $DWI_meanB0 -init $DWI_path/T2toEPI.mat -applyxfm -out $BiasField_in_DWI
@@ -78,7 +78,7 @@ ORIGINALNUMBEROFTHREADS=${ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS}
 ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS=4    # NUMBEROFTHREADS
 export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS
 
-echo "antsregistration SyN, constrained in PE direction"
+echo "antsregistration SyN, constrained in PE direction" | tee -a /dev/stderr
 # antsregistration SyN, constrained in PE direction
 antsRegistration --dimensionality 3 --float 0 --output [${DWI_path}/CC_onedir,${DWI_path}/CC_onedirWarped.nii.gz] \
     --interpolation Linear --winsorize-image-intensities '[0.005,0.995]' --use-histogram-matching 1 \
@@ -93,9 +93,9 @@ antsRegistration --dimensionality 3 --float 0 --output [${DWI_path}/CC_onedir,${
 #    --transform 'SyN[0.1,0.5,0]' --metric CC[T2_in_DWI_brain.nii.gz,DWI_meanb0_brain.nii.gz,1,4] --convergence '[200x150x150x80,1e-6,10]' \
 #    --shrink-factors 8x4x2x1 --smoothing-sigmas 3x2x1x0vox -g "0x1x0" -v
 
-echo "apply warp to DWI images"
+echo "apply warp to DWI images" | tee -a /dev/stderr
 # collapse the transformations to a displacement field
-echo "collapse the transformations to a displacement field"
+echo "collapse the transformations to a displacement field" | tee -a /dev/stderr
 antsApplyTransforms -d 3 -o [${DWI_path}/CollapsedWarp.nii.gz,1] \
   -t ${DWI_path}/CC_onedir1Warp.nii.gz -t ${DWI_path}/CC_onedir0GenericAffine.mat \
   -r $T2_in_DWI_brain
@@ -106,7 +106,7 @@ hislice=`PrintHeader $DWI_preprocessed_masked | grep Dimens | cut -d ',' -f 4 | 
 tr=`PrintHeader $DWI_preprocessed_masked | grep "Voxel Spac" | cut -d ',' -f 4 | cut -d ']' -f 1`
 
 # replicate warp and template image to 4D for warping the whole DWI image
-echo "replicate warp and template image to 4D for warping the whole DWI image"
+echo "replicate warp and template image to 4D for warping the whole DWI image" | tee -a /dev/stderr
 ImageMath 3 ${DWI_path}/4DCollapsedWarp.nii.gz ReplicateDisplacement \
             ${DWI_path}/CollapsedWarp.nii.gz $hislice $tr 0
 
@@ -114,7 +114,7 @@ ImageMath 3 ${T2_in_DWI_brain}_4D.nii.gz ReplicateImage \
             ${T2_in_DWI_brain} $hislice $tr 0
 
 # apply to original epi
-echo " apply to original epi"
+echo " apply to original epi" | tee -a /dev/stderr
 antsApplyTransforms -d 4 -o $DWI_preprocessed_masked_undistorted \
   -t ${DWI_path}/4DCollapsedWarp.nii.gz  \
   -r ${T2_in_DWI_brain}_4D.nii.gz \
@@ -126,23 +126,23 @@ export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS
 
 # intensity correction by multiplying the warped image with the jacobian of the warp field
 # ANTS function to create the jacobian
-echo "intensity correction by multiplying the warped image with the jacobian of the warp field"
+echo "intensity correction by multiplying the warped image with the jacobian of the warp field" | tee -a /dev/stderr
 if [[ $UseJacobian == "True" ]]
 then
     CreateJacobianDeterminantImage 3 CollapsedWarp.nii.gz ${DWI_path}/Jacobian.nii.gz
     if [[ "$UseBiasField" == "True" ]]
 
     then
-        echo "applying Jacobian modulation and Bias field correction"
+        echo "applying Jacobian modulation and Bias field correction" | tee -a /dev/stderr
         fslmaths $DWI_preprocessed_masked_undistorted -div $BiasField_in_DWI -mul $DWI_path/Jacobian.nii.gz $DWI_preprocessed_masked_undistorted
     else
-        echo "applying Jacobian modulation, but no Bias field correction"
+        echo "applying Jacobian modulation, but no Bias field correction" | tee -a /dev/stderr
         fslmaths $DWI_preprocessed_masked_undistorted -mul $DWI_path/Jacobian.nii.gz $DWI_preprocessed_masked_undistorted
     fi
 else
     if [[ "$UseBiasField" == "True" ]]
     then
-        echo "not applying Jacobian modulation, but applying Bias field correction"
+        echo "not applying Jacobian modulation, but applying Bias field correction" | tee -a /dev/stderr
         fslmaths $DWI_preprocessed_masked_undistorted -div $BiasField_in_DWI $DWI_preprocessed_masked_undistorted
     fi
 fi
@@ -153,5 +153,5 @@ mrconvert -force -fslgrad $tmp_bvec $tmp_bval $DWI_preprocessed_masked_undistort
 # clean up
 rm $tmp_bval $tmp_bvec $DWI_preprocessed $DWI_preprocessed_masked_undistorted $DWI_brainmask $DWI_meanB0
 
-echo "END epi distortion correction"
-date +"Date : %d/%m/%Y Time : %H.%M.%S"
+echo "END epi distortion correction" | tee -a /dev/stderr
+date +"Date : %d/%m/%Y Time : %H.%M.%S" | tee -a /dev/stderr
