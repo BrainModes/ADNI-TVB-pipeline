@@ -129,7 +129,7 @@ export ITK_GLOBAL_DEFAULT_NUMBER_OF_THREADS
 echo "intensity correction by multiplying the warped image with the jacobian of the warp field" | tee -a /dev/stderr
 if [[ $UseJacobian == "True" ]]
 then
-    CreateJacobianDeterminantImage 3 CollapsedWarp.nii.gz ${DWI_path}/Jacobian.nii.gz
+    CreateJacobianDeterminantImage 3 ${DWI_path}/CollapsedWarp.nii.gz ${DWI_path}/Jacobian.nii.gz
     if [[ "$UseBiasField" == "True" ]]
 
     then
