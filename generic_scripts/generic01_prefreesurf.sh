@@ -33,7 +33,7 @@ AvgrdcSTRING=$5 # distortion correction method with fieldmap
 Mag1=$6 # first Magnitude Image
 Mag2=$7 # second Magnitude Image
 MagnitudeInputName=$8 # concatenation done with fslmerge
-if [ "$Mag1" = False ] && [ "$Mag2" = False ] ; then
+if [ "$Mag1" = "False" ] && [ "$Mag2" = "False" ] ; then
 	echo "4D magnitude volume already exists; no need to merge"
 else
 	echo "merge two 3D fieldmapping magnitude images to create a 4D magnitude image"
@@ -41,6 +41,7 @@ else
 # two 3D timepoints
 	fslmerge -t $8 $6 $7 # concatenation done with fslmerge
 # The PhaseInputName variable should be set to a 3D phase difference
+fi
 
 PhaseInputName=$9
 
