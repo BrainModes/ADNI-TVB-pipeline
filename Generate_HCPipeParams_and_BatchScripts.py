@@ -63,7 +63,8 @@ def structural_scan_params(rawdataPath, sub):
          T2w_image=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")[0]
      elif len(T2w_images) == 0:
          T2w_image = glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2w*"+"*nii.gz")[0] #not T2STAR because some of them are actually fieldmaps (ADNI mislabelling)
-
+    else:
+        print("Error retrieving image parameters for subject:", rawdataPath_sub)
     # get Scanner Type
     data = json.loads(open(T1_list[0][:-6]+"json").read()) ##Manufacturer = json.loads(open(T1_list[0][:-6]+"json").read())['Manufacturer']
     if "Manufacturer" in data:
