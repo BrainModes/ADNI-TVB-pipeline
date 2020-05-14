@@ -2,6 +2,10 @@
 
 ###### Processing pipeline for multimodal imaging data from the ADNI (Alzheimer's Disease Neuroimaging Initiative) database, to be used as input to The Virtual Brain software.
 
+Pipeline assumes data is available locally. The jupyter notebook accesses the data to generate the batch scripts. The batch scripts and generic scripts should then be saved in the same remote directory. The scripts are to be run from this directory. Output/error files will be written to this directory.
+
+All software/toolboxes used must be sourced before running scripts, e.g. in the ~/.bash_profile file.
+
 ## Create job submission scripts
 
 The Jupyter notebook parses the dataset, and creates a batch job-submission script for each step of the pipeline.
