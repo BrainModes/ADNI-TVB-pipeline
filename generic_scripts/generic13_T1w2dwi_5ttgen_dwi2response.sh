@@ -1,9 +1,9 @@
-#!/bin/bash 
-#!/bin/bash 
-#$ -cwd
-#$ -V
-#$ -l h_vmem=10G
-#$ -l h_rt=03:00:00
+#!/bin/bash
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=10G
+#SBATCH --time=03:00:00
+#SBATCH --partition=default
 
 resultsDir=$1
 sub=$2
@@ -29,7 +29,7 @@ fs_default="/fast/work/groups/ag_ritter/MR_processing/HCP_pipeline/mrtrix3/share
 # extract meanb0 image for registration
 dwiextract -force $dwi_intensity_norm - -bzero | mrmath - mean $dwi_meanb0 -axis 3
 
-# convert images to .nii for flirt 
+# convert images to .nii for flirt
 mrconvert -force $dwi_meanb0 $dwi_meanb0_nii
 
 # flirt dwi2T1w

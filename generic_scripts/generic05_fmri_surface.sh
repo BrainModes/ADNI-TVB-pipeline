@@ -1,10 +1,9 @@
 #!/bin/bash
-#$ -cwd
-#$ -V
-#$ -l h_vmem=6G
-#$ -l h_rt=12:00:00
-#$ -q medium.q
-#$ -P medium
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=6G
+#SBATCH --time=12:00:00
+#SBATCH --partition=medium
 
 # activate the python environment we need
 . /fast/work/users/pairk_c/miniconda/etc/profile.d/conda.sh

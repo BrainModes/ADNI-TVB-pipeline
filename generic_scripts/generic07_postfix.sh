@@ -1,10 +1,9 @@
 #!/bin/bash
-#$ -cwd
-#$ -V
-#$ -l h_vmem=6G
-#$ -l h_rt=08:00:00
-#$ -q medium.q
-#$ -P medium
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=6G
+#SBATCH --time=08:00:00
+#SBATCH --partition=medium
 
 StudyFolder=$1 # Location of Subject folders (named by subjectID)
 Subject=$2 #Space delimited list of subject IDs
@@ -24,4 +23,3 @@ ${HCPPIPEDIR}/PostFix/PostFix.sh \
    --template-scene-single-screen=${HCPPIPEDIR}/PostFix/PostFixScenes/ICA_Classification_SingleScreenTemplate.scene \
    --reuse-high-pass=NO \
    --matlab-run-mode=0
-

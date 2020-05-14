@@ -1,8 +1,9 @@
 #!/bin/bash
-#$ -cwd
-#$ -V
-#$ -l h_vmem=10G
-#$ -l h_rt=03:00:00
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=10G
+#SBATCH --time=03:00:00
+#SBATCH --partition=default
 
 # input arguments:
 resultsDir=$1

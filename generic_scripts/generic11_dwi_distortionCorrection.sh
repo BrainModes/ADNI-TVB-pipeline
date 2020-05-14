@@ -1,10 +1,9 @@
 #!/bin/bash
-#$ -cwd
-#$ -V
-#$ -l h_vmem=12G
-#$ -l h_rt=08:30:00
-#$ -q medium.q
-#$ -P medium
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=12G
+#SBATCH --time=08:30:00
+#SBATCH --partition=medium
 
 #input arguments:
 Studyfolder=$1

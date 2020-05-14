@@ -1,10 +1,9 @@
 #!/bin/bash
-#$ -cwd
-#$ -V
-#$ -l h_vmem=6G
-#$ -l h_rt=24:00:00
-#$ -q medium.q
-#$ -P medium
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=6G
+#SBATCH --time=24:00:00
+#SBATCH --partition=medium
 
 
 

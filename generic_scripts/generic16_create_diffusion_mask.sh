@@ -1,8 +1,9 @@
-#!/bin/bash 
-#$ -cwd
-#$ -V
-#$ -l h_vmem=8G
-#$ -l h_rt=01:00:00
+#!/bin/bash
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=8G
+#SBATCH --time=01:00:00
+#SBATCH --partition=default
 
 # create diffusion masks for tractography
 # connectome has 180 right cortex regions + 180 left cortex regions +19 subcortical
@@ -25,7 +26,7 @@ GlasserFolder="/fast/work/groups/ag_ritter/MR_processing/Glasser_et_al_2016_HCP_
 
 
 # map surface labels from Glasser parcellation to volume
-for Hemisphere in R L; do   
+for Hemisphere in R L; do
     Glasser_label_gii="${GlasserFolder}/${Hemisphere}.label.gii" # used "wb_command -cifti-separate" to seperate the the CIFTI label into hemisphere wise gii label files
     white_fsLR32="${HCP_results_folder}/T1w/fsaverage_LR32k/${sub}.${Hemisphere}.white_MSMAll.32k_fs_LR.surf.gii"
     pial_fsLR32="${HCP_results_folder}/T1w/fsaverage_LR32k/${sub}.${Hemisphere}.pial_MSMAll.32k_fs_LR.surf.gii"
@@ -38,11 +39,11 @@ done
 
 
 # change the labelling of 19 subcortical regions from freesurfer labels (8-60) to (361 - 379) (append it to the end of the connectome)
-# freesurfer subcortical labels:  8 10 11 12 13 17 18 26 28 47 49 50 51 52 53 54 58 60 16 
+# freesurfer subcortical labels:  8 10 11 12 13 17 18 26 28 47 49 50 51 52 53 54 58 60 16
 cp $HCP_results_folder/T1w/aparc+aseg.nii.gz $Diffusion_folder/subcortical_volume_labels.nii.gz
 
 # get only subcortical gm labels
-mri_binarize.bin --i "$Diffusion_folder/subcortical_volume_labels.nii.gz" --o $Diffusion_folder/sub_gm_mask.nii.gz --subcort-gm 
+mri_binarize.bin --i "$Diffusion_folder/subcortical_volume_labels.nii.gz" --o $Diffusion_folder/sub_gm_mask.nii.gz --subcort-gm
 fslmaths "$Diffusion_folder/subcortical_volume_labels.nii.gz" -mas $Diffusion_folder/sub_gm_mask.nii.gz "$Diffusion_folder/subcortical_volume_labels.nii.gz"
 
 # replace labels
@@ -90,7 +91,7 @@ fslmaths "$Diffusion_folder/R.cortical_volume_labels.nii.gz" -mul $Diffusion_fol
 fslmaths "$Diffusion_folder/L.cortical_volume_labels.nii.gz" -mul $Diffusion_folder/overlap_mask.nii.gz "$Diffusion_folder/L.cortical_volume_labels_wo_overlap.nii.gz"
 fslmaths "$Diffusion_folder/subcortical_volume_labels.nii.gz" -mul $Diffusion_folder/overlap_mask.nii.gz "$Diffusion_folder/subcortical_volume_labels_wo_overlap.nii.gz"
 
-# diffusion mask with overlap voxels to zero 
+# diffusion mask with overlap voxels to zero
 fslmaths "$Diffusion_folder/R.cortical_volume_labels_wo_overlap.nii.gz" \
          -add "$Diffusion_folder/L.cortical_volume_labels_wo_overlap.nii.gz" \
          -add "$Diffusion_folder/subcortical_volume_labels_wo_overlap.nii.gz" \
