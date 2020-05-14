@@ -37,7 +37,7 @@ export FSL_FIXDIR=${FixDir}
 FixScript=${HCPPIPEDIR}/ICAFIX/hcp_fix
 # TrainingData="/fast/groups/ag_ritter/scratch/MR_processing/HCP_pipeline/FIX/fix1.065/training_files/Standard.RData" # the default training file, doesn't really fit our needs
 # better use our own hand trained data
-TrainingData="/fast/work/groups/ag_ritter/MR_processing/BerlinRestingstate/scripts/FIX_Training/BerlinRest_Training.RData"
+TrainingData=$4
 
 InputFile=$3
 bandpass=2000
