@@ -26,7 +26,7 @@ else:
     print ("check BIDS directory. If you have multiple visits per subject, you need to flatten it to use this script.")
     # pathList = open("/path/to/pathList.txt","r").readlines()
     # pathList = [x.strip("\n") for x in pathList]
-    
+
     # for i,r in enumerate(pathList):
     #     groups = r.split('/')
     #     pathList[i] = '_ses-'.join(groups[-2:])
@@ -53,20 +53,21 @@ for l in logsubdirs:
 
 def structural_scan_params(rawdataPath, sub):
     rawdataPath_sub=rawdataPath+"/"+sub
-    
+
     # T1w and T2w Images
-    T1_list=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T1w*nii.gz")    
-    
+    T1_list=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T1w*nii.gz")
+
     # use FLAIR image instead of T2, cause T2 is actually T2 Star with bad resolution
-    T2w_image=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")[0]
-    
-    if len(T2w_image) == 0:
-        T2w_image = glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2w*"+"*nii.gz")[0] #not T2STAR because some of them are actually fieldmaps (ADNI mislabelling)
-    
+     T2w_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")
+     if len(T2w_images) > 0:
+         T2w_image=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")[0]
+     elif len(T2w_images) == 0:
+         T2w_image = glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2w*"+"*nii.gz")[0] #not T2STAR because some of them are actually fieldmaps (ADNI mislabelling)
+
     # get Scanner Type
-    data = json.loads(open(T1_list[0][:-6]+"json").read()) ##Manufacturer = json.loads(open(T1_list[0][:-6]+"json").read())['Manufacturer'] 
+    data = json.loads(open(T1_list[0][:-6]+"json").read()) ##Manufacturer = json.loads(open(T1_list[0][:-6]+"json").read())['Manufacturer']
     if "Manufacturer" in data:
-        Manufacturer = data["Manufacturer"]    
+        Manufacturer = data["Manufacturer"]
     elif "ManufacturersModelName" in data:
         if data["ManufacturersModelName"] == "Skyra_fit":
             Manufacturer = "Siemens"
@@ -74,14 +75,14 @@ def structural_scan_params(rawdataPath, sub):
             Manufacturer = " "
     else:
         Manufacturer = " "
-        
+
     if Manufacturer=='Philips' or Manufacturer=="GE" or Manufacturer==" ": return False
-    
+
     #Model = json.loads(open(T1_list[0][:-6]+"json").read())['ManufacturersModelName']
-    
+
     # when more then one T1 image exist
     if len(T1_list)>1:
-        # if same date, take the one WITH gradient distortion correction 
+        # if same date, take the one WITH gradient distortion correction
         T1_json_data = open(T1_list[0][:-6]+"json").read()
         data         = json.loads(T1_json_data)
         if len(data['ImageType'])<3:
@@ -94,53 +95,53 @@ def structural_scan_params(rawdataPath, sub):
             T1w_image=T1_list[0]
     else:
         T1w_image=T1_list[0]
-            
-                                           
+
+
     #######
     ####### Siemens
     #######
     if Manufacturer=="Siemens":
-        
+
         AvgrdcSTRING="SiemensFieldMap"
-        
+
         # Magnitude and Phase image
         MagnitudeImage1 = glob.glob(rawdataPath_sub+"/fmap/"+"sub"+"*_magnitude1*"+".nii.gz")[0]
         MagnitudeImage2 = glob.glob(rawdataPath_sub+"/fmap/"+"sub"+"*_magnitude2*"+".nii.gz")[0]
         PhaseImage = glob.glob(rawdataPath_sub+"/fmap/"+"sub"+"*phasediff*"+".nii.gz")[0]
-        
+
         data = json.loads(open(MagnitudeImage1[:-7]+".json").read())
         EchoTime1 = data['EchoTime']
         data = json.loads(open(MagnitudeImage2[:-7]+".json").read())
         EchoTime2 = data['EchoTime']
-                    
+
         # for fslmerge create a name:
         MagnitudeImage4D="4DMagnitudeImage.nii.gz"
-                        
+
         # DwellTime for the fieldmap
         TE=format(abs(EchoTime1-EchoTime2)*1000,'.2f') # convert to ms
 
-        # T1SampleSpacing and T2SampleSpacing: 
+        # T1SampleSpacing and T2SampleSpacing:
         # DWT = 1/ReceiverBandWidth = 1 / PixelBandWidth * NumberFrequencyEncondingSteps / ParallelReductionFactorInPlane
         data = json.loads(open(T1w_image[:-7]+".json").read())
         if 'DwellTime' in data:
             T1SampleSpacing=format(data['DwellTime'], '.8f')
         elif 'ParallelReductionFactorInPlane' in data :
             T1SampleSpacing= (1 / (data['PixelBandwidth'] * data['BaseResolution'])) / data['ParallelReductionFactorInPlane']
-        elif 'BaseResolution' in data : 
+        elif 'BaseResolution' in data :
             T1SampleSpacing= 1 / (data['PixelBandwidth'] * data['BaseResolution'])
         elif 'ReconMatrixPE' in data :
             T1SampleSpacing= 1 / (data['PixelBandwidth'] * data['ReconMatrixPE'])
         else :
             print("problem for sub",sub," with T1SampleSpacing.")
-        
+
         data = json.loads(open(T2w_image[:-7]+".json").read())
         if 'DwellTime' in data:
             T2SampleSpacing=format(data['DwellTime'], '.8f')
         elif 'ParallelReductionFactorInPlane' in data :
             T2SampleSpacing= (1 / (data['PixelBandwidth'] * data['ReconMatrixPE'])) / data['ParallelReductionFactorInPlane']
-        else : 
-            T2SampleSpacing= 1 / (data['PixelBandwidth'] * data['ReconMatrixPE'])        
-                
+        else :
+            T2SampleSpacing= 1 / (data['PixelBandwidth'] * data['ReconMatrixPE'])
+
         # Unwarp direction for structural scans
         UnwarpDirStruct_name=data['InPlanePhaseEncodingDirectionDICOM']
         #print(UnwarpDirStruct_name)
@@ -148,8 +149,8 @@ def structural_scan_params(rawdataPath, sub):
             UnwarpDirStruct="y" # in json "InPlanePhaseEncodingDirectionDICOM": "ROW",
         else:
             print("Unwarp dir not ROW")
-            
-        return (rawdataPath_sub+"/anat/"+os.path.basename(T1w_image), 
+
+        return (rawdataPath_sub+"/anat/"+os.path.basename(T1w_image),
             rawdataPath_sub+"/anat/"+os.path.basename(T2w_image),
             AvgrdcSTRING,
             rawdataPath_sub+"/fmap/"+os.path.basename(MagnitudeImage1),
@@ -160,13 +161,13 @@ def structural_scan_params(rawdataPath, sub):
             str(T1SampleSpacing),
             str(T2SampleSpacing),
             UnwarpDirStruct)
-            
+
 
     #######
     ####### GE
     #######
-    
-    elif Manufacturer=="GE": 
+
+    elif Manufacturer=="GE":
         # ADNI GE Scanners don't provide any kind of fieldmaps
         # so no distortion correction is possible
         AvgrdcSTRING="NONE"
@@ -178,8 +179,8 @@ def structural_scan_params(rawdataPath, sub):
         T1SampleSpacing="NONE"
         T2SampleSpacing="NONE"
         UnwarpDirStruct="NONE"
-        
-        return (rawdataPath_sub+os.path.basename(T1w_image), 
+
+        return (rawdataPath_sub+os.path.basename(T1w_image),
             rawdataPath_sub+os.path.basename(T2w_image),
             AvgrdcSTRING,
             MagnitudeImage1,
@@ -189,16 +190,16 @@ def structural_scan_params(rawdataPath, sub):
             TE,
             T1SampleSpacing,
             T2SampleSpacing,
-            UnwarpDirStruct)        
-        
+            UnwarpDirStruct)
+
     #######
     ####### Philips
     #######
-    
+
     elif Manufacturer=="Philips":
         ###
         AvgrdcSTRING="SiemensFieldMap"
-        
+
         MagnitudeImage1="NONE"
         MagnitudeImage2="NONE"
         MagnitudeImage4D="NONE"
@@ -206,35 +207,35 @@ def structural_scan_params(rawdataPath, sub):
         PhaseImage2="NONE"
         TE="NONE"
 
-        
-        # T1SampleSpacing and T2SampleSpacing: 
+
+        # T1SampleSpacing and T2SampleSpacing:
         # DWT = 1/ReceiverBandWidth = 1 / PxielBandWidth * NumberFrequencyEncondingSteps / ParallelReductionFactorInPlane
         data = json.loads(open(T1w_image[:-7]+".json").read())
         if 'DwellTime' in data:
             T1SampleSpacing=format(data['DwellTime'], '.8f')
         elif 'ParallelReductionFactorInPlane' in data :
             T1SampleSpacing= (1 / (data['PixelBandwidth'] * data['BaseResolution'])) / data['ParallelReductionFactorInPlane']
-        else : 
+        else :
             T1SampleSpacing= 1 / (data['PixelBandwidth'] * data['BaseResolution'])
-        
+
         data = json.loads(open(T1w_image[:-7]+".json").read())
         if 'DwellTime' in data:
             T1SampleSpacing=format(data['DwellTime'], '.8f')
         elif 'ParallelReductionFactorInPlane' in data :
             T1SampleSpacing= (1 / (data['PixelBandwidth'] * data['BaseResolution'])) / data['ParallelReductionFactorInPlane']
-        else : 
+        else :
             T1SampleSpacing= 1 / (data['PixelBandwidth'] * data['BaseResolution'])
-            
-        
+
+
         UnwarpDirStruct_name=data['InPlanePhaseEncodingDirectionDICOM']
         print(UnwarpDirStruct_name)
-        
+
         if UnwarpDirStruct_name == "ROW":
             UnwarpDirStruct="y" # in json "InPlanePhaseEncodingDirectionDICOM": "ROW",
         else:
             print("Unwarp dir not ROW")
-    
-        return (rawdataPath_sub + "/anat/" + os.path.basename(T1w_image), 
+
+        return (rawdataPath_sub + "/anat/" + os.path.basename(T1w_image),
                 rawdataPath_sub + "/anat/" + os.path.basename(T2w_image),
                 AvgrdcSTRING,
                 rawdataPath_sub + "/fmap/" + os.path.basename(MagnitudeImage1),
@@ -245,20 +246,20 @@ def structural_scan_params(rawdataPath, sub):
                 str(T1SampleSpacing),
                 str(T2SampleSpacing),
                 UnwarpDirStruct)
-            
-    
+
+
 def fmri_scan_params(rawdataPath, sub):
     rawdataPath_sub = rawdataPath+"/"+sub
-    
+
     # fMRI image
     fMRITimeSeries=glob.glob(rawdataPath_sub+"/func/"+"sub"+"*bold*"+"*nii.gz")[0]
     data = json.loads(open(fMRITimeSeries[:-7]+".json").read())
     #Image Resolution
-    FinalFMRIResolution=data['SliceThickness']    
-    
+    FinalFMRIResolution=data['SliceThickness']
+
     #Manufacturer
     if "Manufacturer" in data:
-        Manufacturer = data["Manufacturer"]    
+        Manufacturer = data["Manufacturer"]
     elif "ManufacturersModelName" in data:
         if data["ManufacturersModelName"] == "Skyra_fit":
             Manufacturer = "Siemens"
@@ -266,7 +267,7 @@ def fmri_scan_params(rawdataPath, sub):
             Manufacturer = " "
     else:
         Manufacturer = " "
-    
+
     if Manufacturer=='Philips' or Manufacturer=="GE" or Manufacturer==" ": return False
 
     if Manufacturer=="Siemens":
@@ -291,7 +292,7 @@ def fmri_scan_params(rawdataPath, sub):
         # n_PE_samples= data['AcquisitionMatrixPE']
         # DwellTime=1/(BPPPE*n_PE_samples)/ParallelReductionFactor (or Accelaration) #--> equals 'EffectiveEchoSpacing' in .json
         DwellTime = data['EffectiveEchoSpacing']
-        
+
 
     elif Manufacturer == "GE":
         UnwarpDirfMRI = "NONE"
@@ -307,17 +308,17 @@ def fmri_scan_params(rawdataPath, sub):
         UnwarpDirfMRI = "NONE"
         DwellTime     = "NONE"
         DistortionCorrection = "NONE"
-        
-    return (UnwarpDirfMRI, 
+
+    return (UnwarpDirfMRI,
             rawdataPath_sub + "/func/" + os.path.basename(fMRITimeSeries),
             str(DwellTime),
             DistortionCorrection,
             str(FinalFMRIResolution))
-            
+
 def DWI_scan_params(rawdataPath, sub):
-    
+
     rawdataPath_sub = rawdataPath+"/"+sub
-    
+
     # dwi image
     # some subjects have different DTI files, use the one we find bvec and bvals for
     json_list = glob.glob(rawdataPath_sub+"/dwi/"+"sub"+"*dwi*""*json")
@@ -330,8 +331,8 @@ def DWI_scan_params(rawdataPath, sub):
         if ((not bvecs) | (not bvals) | (not dwi_image)):
             continue
         else:
-            break        
-    
+            break
+
     #  dwidenoise dwipreproc
     data = json.loads(open(dwi_image[:-7]+".json").read())
     def switch_PEdir(argument):
@@ -346,29 +347,29 @@ def DWI_scan_params(rawdataPath, sub):
         return switcher.get(argument, "Invalid direction")
 
     UnwarpDirDWI=switch_PEdir(data['PhaseEncodingDirection'])
-    
+
     EffectiveEchoSpacing = data['EffectiveEchoSpacing']
-    
+
     if UnwarpDirDWI=="RL" or UnwarpDirDWI=="LR":
         UnwarpDirDWI_ants = "1x0x0"
     elif UnwarpDirDWI=="PA" or UnwarpDirDWI=="AP":
         UnwarpDirDWI_ants = "0x1x0"
     elif UnwarpDirDWI=="IS" or UnwarpDirDWI=="SI":
         UnwarpDirDWI_ants = "0x0x1"
-    
-    
-    return (rawdataPath_sub+"/dwi/"+os.path.basename(dwi_image), 
-            rawdataPath_sub+"/dwi/"+os.path.basename(bvecs), 
+
+
+    return (rawdataPath_sub+"/dwi/"+os.path.basename(dwi_image),
+            rawdataPath_sub+"/dwi/"+os.path.basename(bvecs),
             rawdataPath_sub+"/dwi/"+os.path.basename(bvals),
             UnwarpDirDWI,
-            UnwarpDirDWI_ants) 
+            UnwarpDirDWI_ants)
 
 def PET_scan_params(rawdataPath, sub):
     rawdataPath_sub = rawdataPath+"/"+sub
-    
+
     AV1451_image=glob.glob(rawdataPath_sub+"/pet/"+"sub"+"*AV1451*"+"*nii.gz")[0]
     AV45_image=glob.glob(rawdataPath_sub+"/pet/"+"sub"+"*AV45*"+"*nii.gz")[0]
-    
+
     return(rawdataPath_sub+"/pet/"+os.path.basename(AV1451_image),
            rawdataPath_sub+"/pet/"+os.path.basename(AV45_image))
 
@@ -396,7 +397,7 @@ batch_extract_PET_data_list            = open(scriptsPath+"/batch18_extract_PET_
 batch_extract_fmri_list                = open(scriptsPath+"/batch19_extract_fmri.sh","w")
 
 for sub in subList:
-    
+
     ########################
     ##### Structural #######
     ########################
@@ -434,7 +435,7 @@ for sub in subList:
 
 
     ########################
-    ###### fMRI Volume ##### 
+    ###### fMRI Volume #####
     ########################
 
     params_fmri = fmri_scan_params(rawdataPath, sub)
@@ -490,7 +491,7 @@ for sub in subList:
                               "sleep 1m"+"\n")
 
     ########################
-    ######### DWI ########## 
+    ######### DWI ##########
     ########################
 
     #get scan params and file names
@@ -511,11 +512,11 @@ for sub in subList:
                             "True "+           # "Use Jacobian"
                             "True" + "\n")     # "Use bias field"
 
-   
+
     # batch_dwiintensitynorm_list comes later, outside loop.
     batch_T1w2dwi_5ttgen_dwi2response_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic13_T1w2dwi_5ttgen_dwi2response",sub,logPath,"generic13_T1w2dwi_5ttgen_dwi2response",sub,"generic13_T1w2dwi_5ttgen_dwi2response") +" "+
                             resultsPath+" "+
-                            sub+"\n") 
+                            sub+"\n")
 
     # batch_average_response_list.sh comes later, outside loop.
     batch_dwi_2fod_tckgen_sift2_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic15_dwi_2fod_tckgen_sift2",sub,logPath,"generic15_dwi_2fod_tckgen_sift2",sub,"generic15_dwi_2fod_tckgen_sift2") +" "+
@@ -551,7 +552,7 @@ for sub in subList:
                                 sub+" "+
                                 "Restingstate"+"\n")
 
-# close the sbatch submitters 
+# close the sbatch submitters
 batch_prefreesurf_list.close()
 batch_freesurf_list.close()
 batch_postfreesurf_list.close()
