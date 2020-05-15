@@ -65,7 +65,7 @@ def structural_scan_params(rawdataPath, sub):
          T2w_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")
          if len(T2w_images) > 0:
              T2w_image = glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2w*"+"*nii.gz")[0] #not T2STAR because some of them are actually fieldmaps (ADNI mislabelling)
-        else:
+         else:
             print("Error retrieving image parameters for subject:", rawdataPath_sub)
     else:
         print("Error retrieving image parameters for subject:", rawdataPath_sub)
