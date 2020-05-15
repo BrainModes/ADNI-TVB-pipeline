@@ -39,7 +39,7 @@ else:
 
 rawdataPath = "/path/to/raw"
 resultsPath = "/path/to/resultsDir"
-scratchPath="/path/to/remote/scratchDir" # directory for MRtrix to create large tck files
+scratchPath="/path/to/scratchDir" # directory for MRtrix to create large tck files
 FIX_training_file = "/path/to/*_Training.RData"
 scriptsPath = "/path/to/write/batchSubmitterScripts" # where to write the sbatch submitter scripts. generic scripts should already be here.
 logPath = "/path/to/write/logfiles"
@@ -58,7 +58,7 @@ def structural_scan_params(rawdataPath, sub):
     T1_list=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T1w*nii.gz")
 
     # use FLAIR image instead of T2, cause T2 is actually T2 Star with bad resolution
-     FLAIR_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")
+    FLAIR_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")
      if len(FLAIR_images) > 0:
          T2w_image=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")[0]
      elif len(FLAIR_images) == 0:
