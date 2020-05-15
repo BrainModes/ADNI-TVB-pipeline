@@ -58,11 +58,15 @@ def structural_scan_params(rawdataPath, sub):
     T1_list=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T1w*nii.gz")
 
     # use FLAIR image instead of T2, cause T2 is actually T2 Star with bad resolution
-     T2w_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")
-     if len(T2w_images) > 0:
+     FLAIR_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")
+     if len(FLAIR_images) > 0:
          T2w_image=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")[0]
-     elif len(T2w_images) == 0:
-         T2w_image = glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2w*"+"*nii.gz")[0] #not T2STAR because some of them are actually fieldmaps (ADNI mislabelling)
+     elif len(FLAIR_images) == 0:
+         T2w_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")
+         if len(T2w_images) > 0:
+             T2w_image = glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2w*"+"*nii.gz")[0] #not T2STAR because some of them are actually fieldmaps (ADNI mislabelling)
+        else:
+            print("Error retrieving image parameters for subject:", rawdataPath_sub)
     else:
         print("Error retrieving image parameters for subject:", rawdataPath_sub)
     # get Scanner Type
@@ -388,14 +392,34 @@ batch_msmall_list                      = open(scriptsPath+"/batch08_msmall.sh","
 batch_dedriftresample_list             = open(scriptsPath+"/batch09_dedriftresample.sh","w")
 batch_denoise_preproc_list             = open(scriptsPath+"/batch10_denoise_preproc.sh","w")
 batch_dwibiascorrect_dwi2mask_list     = open(scriptsPath+"/batch11_dwi_distortionCorrection.sh","w")
-#batch_dwiintensitynorm_list            = open(scriptsPath+"/batch12_dwiintensitynorm.sh","w")             #only one line: uses all subs. write outside loop.
+batch_dwiintensitynorm_list            = open(scriptsPath+"/batch12_dwiintensitynorm.sh","w")
 batch_T1w2dwi_5ttgen_dwi2response_list = open(scriptsPath+"/batch13_T1w2dwi_5ttgen_dwi2response.sh","w")
-#batch_averageresponse_list            = open(scriptsPath+"/batch14_averageresponse.sh","w")             #only one line: uses all subs. write outside loop.
+batch_averageresponse_list             = open(scriptsPath+"/batch14_averageresponse.sh","w")
 batch_dwi_2fod_tckgen_sift2_list       = open(scriptsPath+"/batch15_dwi_2fod_tckgen_sift2.sh","w")
 batch_create_diffusion_mask_list       = open(scriptsPath+"/batch16_create_diffusion_mask.sh","w")
 batch_tck2connectome_list              = open(scriptsPath+"/batch17_tck2connectome.sh","w")
 batch_extract_PET_data_list            = open(scriptsPath+"/batch18_extract_PET_data.sh","w")
 batch_extract_fmri_list                = open(scriptsPath+"/batch19_extract_fmri.sh","w")
+
+#add line at top declaring interpreter
+batch_prefreesurf_list.write("#!/bin/bash" + "\n")
+batch_freesurf_list.write("#!/bin/bash" + "\n")
+batch_postfreesurf_list.write("#!/bin/bash" + "\n")
+batch_fmri_volume_list.write("#!/bin/bash" + "\n")
+batch_fmri_surface_list.write("#!/bin/bash" + "\n")
+batch_icafix_list.write("#!/bin/bash" + "\n")
+batch_postfix_list.write("#!/bin/bash" + "\n")
+batch_msmall_list.write("#!/bin/bash" + "\n")
+batch_dedriftresample_list.write("#!/bin/bash" + "\n")
+batch_denoise_preproc_list.write("#!/bin/bash" + "\n")
+batch_dwibiascorrect_dwi2mask_list.write("#!/bin/bash" + "\n")
+batch_dwiintensitynorm_list.write("#!/bin/bash" + "\n")
+batch_averageresponse_list.write("#!/bin/bash" + "\n")
+batch_dwi_2fod_tckgen_sift2_list.write("#!/bin/bash" + "\n")
+batch_create_diffusion_mask_list.write("#!/bin/bash" + "\n")
+batch_tck2connectome_list.write("#!/bin/bash" + "\n")
+batch_extract_PET_data_list.write("#!/bin/bash" + "\n")
+batch_extract_fmri_list.write("#!/bin/bash" + "\n")
 
 for sub in subList:
 
@@ -553,6 +577,14 @@ for sub in subList:
                                 sub+" "+
                                 "Restingstate"+"\n")
 
+#batch12_dwiintensitynorm: only one line, uses all subs. write outside loop.
+batch_dwiintensitynorm_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic12_dwiintensitynorm",sub,logPath,"generic12_dwiintensitynorm",sub,"generic12_dwiintensitynorm") +" "+
+                                  resultsPath)
+
+#batch14_averageresponse: only one line, uses all subs. write outside loop.
+batch_averageresponse_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic14_averageresponse",sub,logPath,"generic14_averageresponse",sub,"generic14_averageresponse") +" "+
+                                 resultsPath)
+
 # close the sbatch submitters
 batch_prefreesurf_list.close()
 batch_freesurf_list.close()
@@ -565,21 +597,11 @@ batch_msmall_list.close()
 batch_dedriftresample_list.close()
 batch_denoise_preproc_list.close()
 batch_dwibiascorrect_dwi2mask_list.close()
+batch_dwiintensitynorm_list.close()
 batch_T1w2dwi_5ttgen_dwi2response_list.close()
+batch_averageresponse_list.close()
 batch_dwi_2fod_tckgen_sift2_list.close()
 batch_create_diffusion_mask_list.close()
 batch_tck2connectome_list.close()
 batch_extract_PET_data_list.close()
 batch_extract_fmri_list.close()
-
-#batch12_dwiintensitynorm
-batch_dwiintensitynorm_list = open(scriptsPath+"/batch12_dwiintensitynorm.sh","w") #only one line: uses all subs. write outside loop.
-batch_dwiintensitynorm_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic12_dwiintensitynorm",sub,logPath,"generic12_dwiintensitynorm",sub,"generic12_dwiintensitynorm") +" "+
-                                  resultsPath)
-batch_dwiintensitynorm_list.close()
-
-#batch14_averageresponse
-batch_averageresponse_list = open(scriptsPath+"/batch14_averageresponse.sh","w") #only one line: uses all subs. write outside loop.
-batch_averageresponse_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic14_averageresponse",sub,logPath,"generic14_averageresponse",sub,"generic14_averageresponse") +" "+
-                                 resultsPath)
-batch_averageresponse_list.close()
