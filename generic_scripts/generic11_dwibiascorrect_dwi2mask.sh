@@ -3,7 +3,6 @@
 #--export=ALL
 #SBATCH --mem-per-cpu=6G
 #SBATCH --time=03:00:00
-#SBATCH --partition=default
 
 resultsDir=$1
 sub=$2

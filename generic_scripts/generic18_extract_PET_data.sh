@@ -3,7 +3,6 @@
 #--export=ALL
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=00:30:00
-#SBATCH --partition=default
 
 EnvironmentScript="/fast/work/groups/ag_ritter/MR_processing/HCP_pipeline/Pipeline/Pipelines-3.24.0/Examples/Scripts/SetUpHCPPipeline.sh" # Pipeline environment script
 source ${EnvironmentScript}

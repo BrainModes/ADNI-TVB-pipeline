@@ -4,7 +4,6 @@
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=01:00:00
 #SBATCH -n 4
-#SBATCH --partition=default
 
 resultsDir=$1
 sub=$2

@@ -3,7 +3,6 @@
 #--export=ALL
 #SBATCH --mem-per-cpu=4G
 #SBATCH --time=00:30:00
-#SBATCH --partition=default
 
 
 #########

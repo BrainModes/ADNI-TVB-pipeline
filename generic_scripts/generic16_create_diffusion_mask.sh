@@ -3,7 +3,6 @@
 #--export=ALL
 #SBATCH --mem-per-cpu=8G
 #SBATCH --time=01:00:00
-#SBATCH --partition=default
 
 # create diffusion masks for tractography
 # connectome has 180 right cortex regions + 180 left cortex regions +19 subcortical
