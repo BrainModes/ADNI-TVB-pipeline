@@ -55,16 +55,16 @@ def structural_scan_params(rawdataPath, sub):
     rawdataPath_sub=rawdataPath+"/"+sub
 
     # T1w and T2w Images
-    T1_list=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T1w*nii.gz")
+    T1_list=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T1w.nii.gz") + glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T1w_defacemask.nii.gz")
 
     # use FLAIR image instead of T2, cause T2 is actually T2 Star with bad resolution
-    FLAIR_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")
+    FLAIR_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR.nii.gz") + glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR_defacemask.nii.gz")
      if len(FLAIR_images) > 0:
-         T2w_image=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")[0]
+         T2w_image=FLAIR_images[0]
      elif len(FLAIR_images) == 0:
-         T2w_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*FLAIR*"+"*nii.gz")
+         T2w_images=glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2w.nii.gz") + glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2w_defacemask.nii.gz")# + glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2star.nii.gz") + glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2star_defacemask.nii.gz")
          if len(T2w_images) > 0:
-             T2w_image = glob.glob(rawdataPath_sub+"/anat/"+"sub"+"*T2w*"+"*nii.gz")[0] #not T2STAR because some of them are actually fieldmaps (ADNI mislabelling)
+             T2w_image = T2w_images[0] #not T2STAR because some of them are actually fieldmaps (ADNI mislabelling)
          else:
             print("Error retrieving image parameters for subject:", rawdataPath_sub)
     else:
