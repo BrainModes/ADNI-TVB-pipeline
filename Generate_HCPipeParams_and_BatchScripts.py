@@ -578,11 +578,11 @@ for sub in subList:
                                 "Restingstate"+"\n")
 
 #batch12_dwiintensitynorm: only one line, uses all subs. write outside loop.
-batch_dwiintensitynorm_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic12_dwiintensitynorm",sub,logPath,"generic12_dwiintensitynorm",sub,"generic12_dwiintensitynorm") +" "+
+batch_dwiintensitynorm_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic12_dwiintensitynorm","generic12_dwiintensitynorm",logPath,"generic12_dwiintensitynorm","generic12_dwiintensitynorm","generic12_dwiintensitynorm") +" "+
                                   resultsPath)
 
 #batch14_averageresponse: only one line, uses all subs. write outside loop.
-batch_averageresponse_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic14_averageresponse",sub,logPath,"generic14_averageresponse",sub,"generic14_averageresponse") +" "+
+batch_averageresponse_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic14_averageresponse","generic14_averageresponse",logPath,"generic14_averageresponse","generic14_averageresponse","generic14_averageresponse") +" "+
                                  resultsPath)
 
 # close the sbatch submitters
