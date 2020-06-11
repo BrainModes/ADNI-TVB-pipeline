@@ -6,7 +6,7 @@
 
 # create diffusion masks for tractography
 # connectome has 180 right cortex regions + 180 left cortex regions +19 subcortical
-resultDir=$1
+resultsDir=$1
 sub=$2
 
 # use freesurfer 6 because of mri_binarize --gm option is not available in freesurfer 5.3
