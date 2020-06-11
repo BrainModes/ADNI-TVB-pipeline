@@ -2,7 +2,7 @@
 #SBATCH -D ./
 #--export=ALL
 #SBATCH --mem-per-cpu=20G
-#SBATCH --time=30:00:00
+#SBATCH --time=48:00:00
 #SBATCH -n 8
 #SBATCH --partition=medium
 
