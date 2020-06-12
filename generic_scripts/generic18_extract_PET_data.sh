@@ -21,11 +21,12 @@ source ${FREESURFER_HOME}/SetUpFreeSurfer.sh > /dev/null 2>&1
 #####################################
 # 0. initialize some paths
 #####################################
-sub=$1
+resultsDir=$1
+sub=$2
 echo $sub
 
 #folder with HCP processed data
-HCP_results="/fast/work/groups/ag_ritter/MR_processing/ADNI/results/"$sub
+HCP_results="${resultsDir}/${sub}"
 T1_image=$HCP_results"/T1w/T1w_acpc_dc.nii.gz"
 native_surf=$HCP_results"/T1w/Native"
 

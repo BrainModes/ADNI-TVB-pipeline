@@ -567,6 +567,7 @@ for sub in subList:
     pet_params = PET_scan_params(rawdataPath, sub)
 
     batch_extract_PET_data_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic18_extract_PET_data",sub,logPath,"generic18_extract_PET_data",sub,"generic18_extract_PET_data") +" "+
+                                resultsPath+" "+
                                 sub+" "+
                                 pet_params[0]+" "+
                                 pet_params[1]+"\n")
