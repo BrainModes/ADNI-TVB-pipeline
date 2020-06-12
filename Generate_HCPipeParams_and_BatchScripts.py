@@ -555,7 +555,8 @@ for sub in subList:
 
     batch_tck2connectome_list.write("sbatch -o {}/{}/output_{}.txt -e {}/{}/error_{}.txt {}.sh".format(logPath,"generic17_tck2connectome",sub,logPath,"generic17_tck2connectome",sub,"generic17_tck2connectome") +" "+
                             resultsPath+" "+
-                            sub+"\n")
+                            sub+" "+
+                            scratchPath+"\n")
 
 
 
