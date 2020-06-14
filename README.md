@@ -4,7 +4,7 @@
 
 Each "generic" script represents one part of the processing pipeline. The script "Generate_HCPipeParams_and_BatchScripts.py" parses the raw data to generate batch scripts. Each batch script calls the respective "generic" script for all subjects.
 
-The batch scripts and generic scripts should be saved in the same remote directory. The scripts are to be run from this directory. Output/error files will be written to a directory manually specified in the "Generate_HCPipeParams_and_BatchScripts.py" script.
+The batch scripts and generic scripts should be saved in the same directory. The scripts are to be run from this directory. Output/error files will be written to a directory manually specified in the "Generate_HCPipeParams_and_BatchScripts.py" script.
 
 All software/toolboxes used must be sourced before running scripts, e.g. in the ~/.bash_profile file.
 
