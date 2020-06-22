@@ -13,9 +13,10 @@ source ${FREESURFER_HOME}/SetUpFreeSurfer.sh > /dev/null 2>&1
 
 
 #### input to this script
-# $1 --> subject name
-# $2 --> AV1451 PET iamge
-# $3 --> AV45 PET image
+# $1 --> results directory
+# $2 --> subject name
+# $3 --> AV1451 PET iamge
+# $4 --> AV45 PET image
 # this script assumes it is running on the output of the HCP structural processing pipeline as well as generic_msm_glasser2sub.sh
 
 #####################################
@@ -47,9 +48,9 @@ for PET_modality in Tau Amyloid; do
     mkdir -p $PET_results
 
     if [ $PET_modality = "Tau" ] ; then
-        PET_image=$2
-    elif [ $PET_modality = "Amyloid" ] ; then
         PET_image=$3
+    elif [ $PET_modality = "Amyloid" ] ; then
+        PET_image=$4
     fi
     echo $PET_image
 
