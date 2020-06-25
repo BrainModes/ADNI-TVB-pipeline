@@ -2,7 +2,9 @@
 
 ###### Processing pipeline for multimodal imaging data from the ADNI (Alzheimer's Disease Neuroimaging Initiative) database, to be used as input to The Virtual Brain software.
 
-Each "generic" script represents one part of the processing pipeline. The script "Generate_HCPipeParams_and_BatchScripts.py" parses the raw data to generate batch scripts. Each batch script calls the respective "generic" script for all subjects.
+Each script in the "generic" directory ("generic" script) represents one part of the processing pipeline.
+
+The script "Generate_HCPipeParams_and_BatchScripts.py" parses the raw data (nifti, BIDS-formatted) to generate batch job-submitter scripts. Each batch script calls the respective "generic" script for all subjects.
 
 The batch scripts and generic scripts should be saved in the same directory. The scripts are to be run from this directory. Output/error files will be written to a directory manually specified in the "Generate_HCPipeParams_and_BatchScripts.py" script.
 
@@ -22,7 +24,7 @@ Note: The script assumes jobs will be submitted via the slurm job scheduling sys
 
 For some scripts, these commands take arguments specifying single-subject parameters that are required for processing.
 
-**Required editing:** The script "Generate_HCPipeParams_and_BatchScripts.py" will have to be modified for data paths. The pipeline assumes data is organized according to the BIDS specification. If subjects have scans from multiple visits, the longitudinal data may need to be "flattened" before executing the code in the notebook (see notebook for details).
+**Required editing:** The script "Generate_HCPipeParams_and_BatchScripts.py" will have to be modified for data paths. The pipeline assumes data is organized according to the BIDS specification. If subjects have scans from multiple visits, the longitudinal data may need to be "flattened" before executing the code in "Generate_HCPipeParams_and_BatchScripts.py" (see script for details).
 
 ## Single-subject scripts
 The folder "generic_scripts" contains the single subject scripts. Some of these scripts are wrappers for the HCP Pipeline scripts (https://github.com/Washington-University/HCPpipelines), others contain processing commands themselves.

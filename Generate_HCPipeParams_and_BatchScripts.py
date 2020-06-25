@@ -24,6 +24,11 @@ if multiplevisits==False:
     subList = [x.strip("\n") for x in subList]
 else:
     print ("check BIDS directory. If you have multiple visits per subject, you need to flatten it to use this script.")
+    #if data is longitudinal (multiple visits per subject), e.g.: .../raw/sub-1234/{ADNIVisit1,ADNIVisit2}/{anat, dwi, fmap, func, pet}, the data needs to be flattened.
+    # This is so the HCP scripts handle the input files/create output files as expected.
+    # For each sub, for each visit, create a directory named, e.g.: sub-1234_ses-ADNIVisitX
+
+
     # pathList = open("/path/to/pathList.txt","r").readlines()
     # pathList = [x.strip("\n") for x in pathList]
 
