@@ -1,8 +1,8 @@
-#!/bin/bash 
-#$ -cwd
-#$ -V
-#$ -l h_vmem=4G
-#$ -l h_rt=00:30:00
+#!/bin/bash
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=00:30:00
 
 EnvironmentScript="/fast/work/groups/ag_ritter/MR_processing/HCP_pipeline/Pipeline/Pipelines-3.24.0/Examples/Scripts/SetUpHCPPipeline.sh" # Pipeline environment script
 source ${EnvironmentScript}
@@ -13,19 +13,21 @@ source ${FREESURFER_HOME}/SetUpFreeSurfer.sh > /dev/null 2>&1
 
 
 #### input to this script
-# $1 --> subject name
-# $2 --> AV1451 PET iamge
-# $3 --> AV45 PET image
+# $1 --> results directory
+# $2 --> subject name
+# $3 --> AV1451 PET iamge
+# $4 --> AV45 PET image
 # this script assumes it is running on the output of the HCP structural processing pipeline as well as generic_msm_glasser2sub.sh
 
 #####################################
 # 0. initialize some paths
 #####################################
-sub=$1
+resultsDir=$1
+sub=$2
 echo $sub
 
 #folder with HCP processed data
-HCP_results="/fast/work/groups/ag_ritter/MR_processing/ADNI/results/"$sub
+HCP_results="${resultsDir}/${sub}"
 T1_image=$HCP_results"/T1w/T1w_acpc_dc.nii.gz"
 native_surf=$HCP_results"/T1w/Native"
 
@@ -41,14 +43,14 @@ GlasserFolder="/fast/work/groups/ag_ritter/MR_processing/Glasser_et_al_2016_HCP_
 
 # loop over Tau and Abeta PET
 for PET_modality in Tau Amyloid; do
-    
+
     PET_results=$HCP_results"/PET_PVC_MG/"$PET_modality
     mkdir -p $PET_results
 
     if [ $PET_modality = "Tau" ] ; then
-        PET_image=$2
-    elif [ $PET_modality = "Amyloid" ] ; then
         PET_image=$3
+    elif [ $PET_modality = "Amyloid" ] ; then
+        PET_image=$4
     fi
     echo $PET_image
 
@@ -75,7 +77,7 @@ for PET_modality in Tau Amyloid; do
     echo "#####################################"
     echo "#####################################"
 
-    # using PETPVC toolbox 
+    # using PETPVC toolbox
     #       reference: PETPVC: a toolbox for performing partial volume correction techniques in positron emission tomography BA Thomas, V Cuplov, A Bousse, A Mendes, K Thielemans, BF Hutton, K Erlandsson Physics in Medicine and Biology 61 (22), 7975. DOI
     # using Mueller Gartner PVC method, input:
     #       mask image containing gray and white matter binary images alinged in 4th dimension
@@ -97,12 +99,12 @@ for PET_modality in Tau Amyloid; do
     mri_binarize --i $HCP_results/T1w/aparc+aseg.nii.gz --o $PET_results/gm_mask.nii --gm
     fslmerge -t $PET_results/gm_wm_mask.nii.gz $PET_results/gm_mask.nii $PET_results/wm_mask.nii
 
-    # there is a issue with itk in the toolbox, giving error: 
-    #           "Description: itk::ERROR: MullerGartnerImageFilter(0x7fe7ebc89ea0): Inputs do not occupy the same physical space! 
-    #           InputImage Origin: [-9.0000000e+01, 1.2600000e+02, -7.2000000e+01], 
+    # there is a issue with itk in the toolbox, giving error:
+    #           "Description: itk::ERROR: MullerGartnerImageFilter(0x7fe7ebc89ea0): Inputs do not occupy the same physical space!
+    #           InputImage Origin: [-9.0000000e+01, 1.2600000e+02, -7.2000000e+01],
     #           InputImage_1 Origin: [-9.0000000e+01, 1.2599999e+02, -7.2000000e+01]
     #	        Tolerance: 6.9999999e-07"
-    # "Inputs do not occupy the same physical space!" --> but this in reality is just rounding error of the floats, see th numbers above. 
+    # "Inputs do not occupy the same physical space!" --> but this in reality is just rounding error of the floats, see th numbers above.
     # quick and dirty solution: https://github.com/UCL/PETPVC/issues/31 use fslcpgeom <source> <destination> and copy the header from one nii file on the other
 
     fslcpgeom $PET_results/PET2T1w_brain_norm.nii.gz $PET_results/gm_wm_mask.nii.gz -d #-d ... don't copy image dimensions
@@ -118,7 +120,7 @@ for PET_modality in Tau Amyloid; do
         # initialize surfaces
         PET_volume=$PET_results"/PET2T1w_brain_norm_PVC.nii.gz"
         PET_volume_bin=$PET_results"/PET2T1w_brain_norm_PVC_bin.nii.gz"
-        
+
 
         PET_surf_32k_fs_LR=$PET_results"/"$Hemisphere".${PET_modality}_load_MSMAll.32k_fs_LR.func.gii"
         midthickness_surf_32k_fs_LR=$DownsampleFolder"/"$sub"."$Hemisphere".midthickness_MSMAll."$LowResMesh"k_fs_LR.surf.gii"
@@ -166,7 +168,7 @@ for PET_modality in Tau Amyloid; do
 
         #convert to cifti to parcellate later
         $CARET7DIR/wb_command -cifti-create-dense-scalar $PET_cifti -$h-metric $PET_surf_32k_fs_LR
-    
+
 
         # use parcellation to get regionwise PET load
         $CARET7DIR/wb_command -cifti-parcellate $PET_cifti ${GlasserFolder}/Q1-Q6_RelatedValidation210.CorticalAreas_dil_Final_Final_Areas_Group_Colors.32k_fs_LR.dlabel.nii \
@@ -202,7 +204,7 @@ for PET_modality in Tau Amyloid; do
                     --replace 58 377 \
                     --replace 60 378 \
                     --replace 16 379 \
-                    
+
     fslmeants -i $PET_results/PET2T1w_brain_norm_PVC.nii.gz --label=$PET_results/subcort_gm.nii.gz -o $PET_results/${PET_modality}_load.subcortical.txt
 
 done

@@ -1,10 +1,9 @@
 #!/bin/bash
-#$ -cwd
-#$ -V
-#$ -l h_vmem=12G
-#$ -l h_rt=12:00:00
-#$ -q medium.q
-#$ -P medium
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=12G
+#SBATCH --time=12:00:00
+#SBATCH --partition=medium
 
 # activate the python environment we need
 . /fast/work/users/pairk_c/miniconda/etc/profile.d/conda.sh
@@ -17,7 +16,7 @@ EnvironmentScript="/fast/work/groups/ag_ritter/MR_processing/HCP_pipeline/Pipeli
 
 # Requirements for this script
 #  installed versions of: FSL (version 5.0.6)
-#  environment: FSLDIR , HCPPIPEDIR , CARET7DIR 
+#  environment: FSLDIR , HCPPIPEDIR , CARET7DIR
 
 #Set up pipeline environment variables and software
 source ${EnvironmentScript}
@@ -26,7 +25,7 @@ source ${EnvironmentScript}
 echo "$@"
 
 
-########################################## INPUTS ########################################## 
+########################################## INPUTS ##########################################
 
 #Scripts called by this script do assume they run on the results of the HCP minimal preprocesing pipelines from Q2
 
@@ -57,5 +56,4 @@ ${HCPPIPEDIR}/MSMAll/MSMAllPipeline.sh \
   --input-registration-name=${InRegName} \
   --matlab-run-mode=${MatlabMode}
 
-
-
+conda deactivate

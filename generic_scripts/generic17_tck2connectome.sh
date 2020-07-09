@@ -1,9 +1,9 @@
-#!/bin/bash 
-#$ -cwd
-#$ -V
-#$ -l h_vmem=4G
-#$ -l h_rt=01:00:00
-#$ -pe smp 4
+#!/bin/bash
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=01:00:00
+#SBATCH -n 4
 
 resultsDir=$1
 sub=$2
@@ -25,4 +25,3 @@ mrtransform -linear $results_path/dwi2T1w_mrtrix.txt -inverse $diffusion_mask $d
 # create connectome
 tck2connectome -tck_weights_in $sift_weights $tck_file $diffusion_mask_2dwi $weights -nthreads 4 -force -symmetric -zero_diagonal
 tck2connectome -scale_length -stat_edge mean -tck_weights_in $sift_weights $tck_file $diffusion_mask_2dwi $lengths -nthreads 4 -force -symmetric -zero_diagonal
-

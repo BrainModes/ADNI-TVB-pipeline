@@ -1,8 +1,8 @@
-#!/bin/bash 
-#$ -cwd
-#$ -V
-#$ -l h_vmem=4G
-#$ -l h_rt=00:30:00
+#!/bin/bash
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=4G
+#SBATCH --time=00:30:00
 
 
 #########

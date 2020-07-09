@@ -1,12 +1,11 @@
 #!/bin/bash
-#$ -cwd
-#$ -V
-#$ -l h_vmem=6G
-#$ -l h_rt=24:00:00
-#$ -pe smp 4
-#$ -v OMP_NUM_THREADS=4 # num_cores is set to 4 in FreeSurferPipeline_wo_hires_free5.3.sh
-#$ -q medium.q
-#$ -P medium
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=6G
+#SBATCH --time=48:00:00
+#SBATCH -n 4
+#--export OMP_NUM_THREADS=4 # num_cores is set to 4 in FreeSurferPipeline_wo_hires_free5.3.sh
+#SBATCH --partition=medium
 
 
 command_line_specified_run_local="TRUE"
@@ -25,7 +24,7 @@ PRINTCOM=""
 #QUEUE="-q veryshort.q"
 
 
-########################################## INPUTS ########################################## 
+########################################## INPUTS ##########################################
 
 #Scripts called by this script do assume they run on the outputs of the PreFreeSurfer Pipeline
 

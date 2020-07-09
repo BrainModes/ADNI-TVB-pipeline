@@ -1,10 +1,9 @@
-#!/bin/bash 
-#$ -cwd
-#$ -V
-#$ -l h_vmem=12G
-#$ -l h_rt=8:00:00
-#$ -q medium.q
-#$ -P medium
+#!/bin/bash
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=12G
+#SBATCH --time=08:00:00
+#SBATCH --partition=medium
 
 StudyFolder=$1 #Location of Subject folders (named by subjectID)
 Subject=$2 #Space delimited list of subject IDs
@@ -19,7 +18,7 @@ echo "$@"
 PRINTCOM=""
 #PRINTCOM="echo"
 
-########################################## INPUTS ########################################## 
+########################################## INPUTS ##########################################
 
 #Scripts called by this script do assume they run on the results of the HCP minimal preprocesing pipelines from Q2
 
@@ -58,4 +57,3 @@ ${HCPPIPEDIR}/DeDriftAndResample/DeDriftAndResamplePipeline.sh \
   --smoothing-fwhm=${SmoothingFWHM} \
   --highpass=${HighPass} \
   --matlab-run-mode=${MatlabMode}
-

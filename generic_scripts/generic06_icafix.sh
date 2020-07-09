@@ -1,10 +1,9 @@
 #!/bin/bash
-#$ -cwd
-#$ -V
-#$ -l h_vmem=12G
-#$ -l h_rt=04:00:00
-#$ -q medium.q
-#$ -P medium
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=12G
+#SBATCH --time=04:00:00
+#SBATCH --partition=medium
 
 # activate the R environment we need.
 . /fast/work/users/pairk_c/miniconda/etc/profile.d/conda.sh
@@ -15,7 +14,7 @@ conda activate R
 #	Get the command line options for this script
 #
 # Global Output Variables
-#	${StudyFolder}			- Path to folder containing all subjects data in subdirectories named 
+#	${StudyFolder}			- Path to folder containing all subjects data in subdirectories named
 #							  for the subject id
 #	${Subjlist}				- Space delimited list of subject IDs
 #	${EnvironmentScript}	- Script to source to setup pipeline environment
@@ -38,7 +37,7 @@ export FSL_FIXDIR=${FixDir}
 FixScript=${HCPPIPEDIR}/ICAFIX/hcp_fix
 # TrainingData="/fast/groups/ag_ritter/scratch/MR_processing/HCP_pipeline/FIX/fix1.065/training_files/Standard.RData" # the default training file, doesn't really fit our needs
 # better use our own hand trained data
-TrainingData="/fast/work/groups/ag_ritter/MR_processing/BerlinRestingstate/scripts/FIX_Training/BerlinRest_Training.RData"
+TrainingData=$4
 
 InputFile=$3
 bandpass=2000

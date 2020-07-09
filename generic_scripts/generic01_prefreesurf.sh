@@ -1,10 +1,9 @@
 #!/bin/bash
-#$ -cwd
-#$ -V
-#$ -l h_vmem=6G
-#$ -l h_rt=24:00:00
-#$ -q medium.q
-#$ -P medium
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=6G
+#SBATCH --time=24:00:00
+#SBATCH --partition=medium
 
 
 
@@ -30,18 +29,24 @@ T2wInputImages=$4 #T2 image
 
 AvgrdcSTRING=$5 # distortion correction method with fieldmap
 
-# The MagnitudeInputName variable should be set to a 4D magitude volume with two 3D timepoints
 Mag1=$6 # first Magnitude Image
 Mag2=$7 # second Magnitude Image
 MagnitudeInputName=$8 # concatenation done with fslmerge
-fslmerge -t $8 $6 $7
+if [ "$Mag1" = "False" ] && [ "$Mag2" = "False" ] ; then
+	echo "4D magnitude volume already exists; no need to merge"
+else
+	echo "merge two 3D fieldmapping magnitude images to create a 4D magnitude image"
+# The MagnitudeInputName variable should be set to a 4D magitude volume with
+# two 3D timepoints
+	fslmerge -t $8 $6 $7 # concatenation done with fslmerge
+# The PhaseInputName variable should be set to a 3D phase difference
+fi
 
-# The PhaseInputName variable should be set to a 3D phase difference 
-PhaseInputName=$9 
+PhaseInputName=$9
 
 TE=${10}
-T1wSampleSpacing=${11} 
-T2wSampleSpacing=${12} 
+T1wSampleSpacing=${11}
+T2wSampleSpacing=${12}
 UnwarpDir=${13}
 
 
@@ -49,7 +54,7 @@ GradientDistortionCoeffs="NONE" # Set to NONE to skip gradient distortion correc
 
 # set GE and Spin Echo fieldmap options to "NONE"
 GEB0InputName="NONE"
-SpinEchoPhaseEncodeNegative="NONE" 
+SpinEchoPhaseEncodeNegative="NONE"
 SpinEchoPhaseEncodePositive="NONE"
 DwellTime="NONE" # DwellTime of Spin Echo fieldmap
 SEUnwarpDir="NONE"
@@ -60,23 +65,23 @@ TopupConfig="NONE"
 # Hires T1w MNI template
 T1wTemplate="${HCPPIPEDIR_Templates}/MNI152_T1_1mm.nii.gz"
 # Hires brain extracted MNI template
-T1wTemplateBrain="${HCPPIPEDIR_Templates}/MNI152_T1_1mm_brain.nii.gz" 
+T1wTemplateBrain="${HCPPIPEDIR_Templates}/MNI152_T1_1mm_brain.nii.gz"
 # Lowres T1w MNI template
-T1wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T1_2mm.nii.gz" 
+T1wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T1_2mm.nii.gz"
 # Hires T2w MNI Template
-T2wTemplate="${HCPPIPEDIR_Templates}/MNI152_T2_1mm.nii.gz" 
+T2wTemplate="${HCPPIPEDIR_Templates}/MNI152_T2_1mm.nii.gz"
 # Hires T2w brain extracted MNI Template
-T2wTemplateBrain="${HCPPIPEDIR_Templates}/MNI152_T2_1mm_brain.nii.gz" 
+T2wTemplateBrain="${HCPPIPEDIR_Templates}/MNI152_T2_1mm_brain.nii.gz"
 # Lowres T2w MNI Template
-T2wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T2_2mm.nii.gz" 
+T2wTemplate2mm="${HCPPIPEDIR_Templates}/MNI152_T2_2mm.nii.gz"
 # Hires MNI brain mask template
 TemplateMask="${HCPPIPEDIR_Templates}/MNI152_T1_1mm_brain_mask.nii.gz"
-# Lowres MNI brain mask template		
-Template2mmMask="${HCPPIPEDIR_Templates}/MNI152_T1_2mm_brain_mask_dil.nii.gz" 
+# Lowres MNI brain mask template
+Template2mmMask="${HCPPIPEDIR_Templates}/MNI152_T1_2mm_brain_mask_dil.nii.gz"
 # BrainSize in mm, 150 for humans
-BrainSize="150" 
+BrainSize="150"
 # FNIRT 2mm T1w Config
-FNIRTConfig="${HCPPIPEDIR_Config}/T1_2_MNI152_2mm.cnf" 
+FNIRTConfig="${HCPPIPEDIR_Config}/T1_2_MNI152_2mm.cnf"
 
 
 # If PRINTCOM is not a null or empty string variable, then
@@ -118,4 +123,4 @@ ${HCPPIPEDIR}/PreFreeSurfer/PreFreeSurferPipeline.sh \
 
 
 # deactivate the python environment
-source deactivate
+conda deactivate

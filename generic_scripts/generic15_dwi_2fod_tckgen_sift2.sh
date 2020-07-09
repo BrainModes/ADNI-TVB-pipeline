@@ -1,11 +1,10 @@
-#!/bin/bash 
-#$ -cwd
-#$ -V
-#$ -l h_vmem=20G
-#$ -l h_rt=30:00:00
-#$ -pe smp 8
-#$ -q medium.q
-#$ -P medium
+#!/bin/bash
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=20G
+#SBATCH --time=48:00:00
+#SBATCH -n 8
+#SBATCH --partition=medium
 
 resultsDir=$1
 sub=$2
