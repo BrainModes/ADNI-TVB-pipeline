@@ -1,10 +1,4 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-"""
-Created on Thu May 14 14:45:43 2020
-
-@author: Roopa Pai
-"""
 
 # Generate parameters for HCP pipeline
 
