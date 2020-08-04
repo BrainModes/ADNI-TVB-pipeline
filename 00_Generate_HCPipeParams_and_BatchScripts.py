@@ -53,6 +53,9 @@ logsubdirs = [os.path.splitext(os.path.basename(f))[0] for f in glob.glob('{}/ge
 for l in logsubdirs:
     os.makedirs(os.path.join(logPath, l),exist_ok=True)
 
+os.makedirs(resultsPath,exist_ok=False) #to prevent overwrite
+os.makedirs(scratchPath,exist_ok=False) ##to prevent overwrite
+
 
 # Functions to retrieve image parameters
 
