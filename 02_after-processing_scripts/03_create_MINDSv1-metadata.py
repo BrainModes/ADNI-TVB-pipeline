@@ -1,3 +1,11 @@
+#!/usr/bin/env python3
+#SBATCH -D ./
+#--export=ALL
+#SBATCH --mem-per-cpu=6G
+#SBATCH --time=24:00:00
+#SBATCH --partition=medium
+
+
 # automated_MINDSJSON-writer
 # This script produces a collection of MINDS JSONs, which describe the dataset
 # according to HBP minimal metadata criteria (MINDS v1).

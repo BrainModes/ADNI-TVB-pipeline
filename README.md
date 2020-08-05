@@ -38,4 +38,4 @@ The folder "01_processing_scripts" contains the single subject scripts. Some of 
 2. Create all files required by TVB: scripts in "02_after-processing_scripts" directory
 3. Create MINDS v1 metadata files to describing the dataset as required by the EBRAINS Knowledge Graph. (References: https://github.com/HumanBrainProject/openMINDS, https://github.com/roopa-pai/automated_MINDSJSON-writer/blob/master/automated_MINDSJSON-writer.ipynb)
 
-**Required editing:** 01_reorganize.py should only require the editing of a few paths at the top of the script. 03_create_MINDSv1-metadata.py may require editing throughout the script, depending on use-case (authors, phenotype data, IRIs).
+**Required editing:** 01_reorganize.py should only require the editing of a few paths at the top of the script. 03_create_MINDSv1-metadata.py may require editing throughout the script, depending on use-case (authors, phenotype data, IRIs, etc.).
