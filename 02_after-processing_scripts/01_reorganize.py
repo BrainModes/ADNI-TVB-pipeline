@@ -71,6 +71,7 @@ for subvis in sub_vis_list:
     #region
     region_names = open("misc_files/region_labels.txt","r") # EDIT PATH
     region_names = sublist_csv.read().split('\n')
+    region_names.remove("")
     assert len(region_names)==379
     cortical = np.zeros((len(region_names))) # regions are ordered, first cortical than subcortical ones
     cortical[:360] = 1
