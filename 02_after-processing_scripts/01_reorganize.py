@@ -137,15 +137,6 @@ for subvis in sub_vis_list:
     mrtrix_output_dir #Path to results of MRtrix3_connectome pipeline
     participant_label #Participant label as in BIDS dataset, i.e. sub-<participant_label>
     parcellation #Parcellation used in MRtrix3_connectome pipeline
-    #parc_image = #Path to the parcellated image used for SC etxraction
-    #tvb_output #Path to results of TVBconverter pipeline
-    #tvb_workdir #Path to temp dir of TVBconverter pipeline
-    #n_cpus #How many cpus to run in parallel
-    #weights_path #Path to the SC weights file
-    #tracts_path #Path to the SC tract length file
-    #input_dir #Path to the BIDS input dir
-    #fMRI_ROI_ts #Path to the fMRI ROI level time series
-    #task_name #Name of the fMRI e.g. "rest" or some special task
 
     # 1. create cortical surface and region mapping
     print("START: create cortical surface and region mapping")
