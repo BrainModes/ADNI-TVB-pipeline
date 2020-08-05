@@ -33,7 +33,7 @@ The folder "01_processing_scripts" contains the single subject scripts. Some of 
 
 **Required editing:** "generic" bash scripts may need to be modified for job submission arguments, e.g. queue name.
 
-## 02_after-processing_scripts
+## 03_after-processing_scripts
 1. Organize final output files according to the BIDS specification.
 2. Create all files required by TVB: scripts in "02_after-processing_scripts" directory
 3. Create MINDS v1 metadata files to describing the dataset as required by the EBRAINS Knowledge Graph. (References: https://github.com/HumanBrainProject/openMINDS, https://github.com/roopa-pai/automated_MINDSJSON-writer/blob/master/automated_MINDSJSON-writer.ipynb)
