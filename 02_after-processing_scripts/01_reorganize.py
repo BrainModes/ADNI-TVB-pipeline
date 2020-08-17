@@ -8,6 +8,7 @@
 rawdataPath = "/path/to/raw" # EDIT PATH: top-level path containing BIDS-format unprocessed data
 resultsPath = "/path/to/resultsDir" # EDIT PATH: top-level path containing output of generic/batch processing
 misc_files_path = "" # EDIT PATH: location of "misc_files" directory of this repo
+HCPannotoutputPath="" # EDIT: directory in which the HCP annot output directory will be created
 
 import os
 import shutil
@@ -18,6 +19,7 @@ import mne
 import json
 from collections import OrderedDict
 import subprocess
+import shlex
 
 #make BIDS derivative directory
 pipeline_name = "TVB"
@@ -94,26 +96,28 @@ print("START: download fsaverage annot files, and script to convert to subject-s
 shutil.copy(os.environ['FREESURFER_HOME']+"/FreeSurferColorLUT.txt", os.environ['SUBJECTS_DIR']+"/FreeSurferColorLUT.txt")
 os.chdir(rawdataPath)
 
-# write sub_vis_list to a textfile so the script "create_subj_volume_parcellation.sh" can use it
+# 0.4) write sub_vis_list to a textfile so the script "create_subj_volume_parcellation.sh" can use it
 with open(resultsPath+"/subList.txt", 'w') as f:
     for s in sub_vis_list:
         f.write(s + '\n')
 
-#create symbolic links to subjects' HCP FreeSurfer directories in $subjects_dir
+# 0.5) create symbolic links to subjects' HCP FreeSurfer directories in $subjects_dir
 for i, subvis in enumerate(sub_vis_list):
     os.symlink(resultsPath+"/"+subvis+"/T1w/"+subvis, os.environ['SUBJECTS_DIR']+"/"+subvis)
 
-os.chdir(resultsPath)
 # create directory inside results directory, called "HCPMMP1_parcellation", containing the results of this script. creates a FreeSurfer-style subject-specific parcellation of brain using HCP atlas.
 # Also creates tables with volume/thickness/etc data. This can be changedd.
 # default set to process all subjects on subList. This can be changed.
-commandTxt = "bash {}/create_subj_volume_parcellation.sh -L {}/subList.txt -a HCPMMP1 -d {} -m YES -s YES -t YES".format(os.environ['SUBJECTS_DIR'],resultsPath,"HCPMMP1_parcellation")
 print("START: create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas\n")
-print("COMMAND: "+commandTxt+"\n\n")
-subprocess.call(commandTxt, shell=True)
+os.chdir(HCPannotoutputPath)
+commandTxt = "bash {}/create_subj_volume_parcellation.sh -L {}/subList.txt -a HCPMMP1 -f 1 -l 3 -d {} -m YES -s YES -t YES".format(os.environ['SUBJECTS_DIR'],resultsPath,"HCPMMP1_parcellation")
+args=shlex.split(commandTxt)
+print("COMMAND ARGS: ",args,"\n")
+p = subprocess.Popen(args,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+stdout, stderr = p.communicate()
 print("FINISH: create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas\n")
 
-
+print("START: loop through subjects")
 for subvis in sub_vis_list:
     #get subject ID and session name
     sub=subvis.split("_")[0].split("-")[1]
@@ -123,7 +127,7 @@ for subvis in sub_vis_list:
     #change "flattened" directory names back into longitudinal BIDS format
     os.makedirs(session_outputdir, exist_ok=False) # to prevent overwrite
 
-
+    print("START: copy & rename pipeline output files to BIDS-style derivatives directory, as well as TVB-style output directory")
     #copy & rename pipeline output files to under derivatives/sub-XXXX/ses-XXXX directory
     #but also to common location for TVB-input
     # STRUCTURAL CONNECTOME: DONE BELOW
@@ -165,13 +169,12 @@ for subvis in sub_vis_list:
     if os.path.isfile(resultsPath+"/"+subvis+"PET_PVC_MG/Tau/Tau.subcortical.txt"):
         shutil.copyfile(resultsPath+"/"+subvis+"PET_PVC_MG/Tau/Tau.subcortical.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_subcortical_parc-hcpmmp1_pet.txt")
 
-    # TO DO:
-    # rename above files?
+    print("FINISH: copy & rename pipeline output files to BIDS-style derivatives directory, as well as TVB-style output directory")
 
+    print("START: create files not created by processing pipeline")
     ###################################################
     # create files not created by processing pipeline #
     ###################################################
-
     # 1. create cortical surface and region mapping
     # 2. compute source space
     # 3. compute BEM model + EEG Locations
@@ -640,5 +643,7 @@ for subvis in sub_vis_list:
 
 
     print("FINISH: save files for TVB")
-
-    print("Script FINISHED.")
+    print("FINISH: create files not created by processing pipeline")
+    
+print("FINISH: loop through subjects")
+print("Script FINISHED.")
