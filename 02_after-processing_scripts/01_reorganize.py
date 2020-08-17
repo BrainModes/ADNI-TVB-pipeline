@@ -7,19 +7,21 @@
 
 rawdataPath = "/path/to/raw" # EDIT PATH: top-level path containing BIDS-format unprocessed data
 resultsPath = "/path/to/resultsDir" # EDIT PATH: top-level path containing output of generic/batch processing
-region_names_file = "misc_files/region_labels.txt" # EDIT PATH: file is included in the "misc_files" directory of this repo
+misc_files_path = "" # EDIT PATH: location of "misc_files" directory of this repo
 
 import os
 import shutil
+import wget
 import numpy as np
 import nibabel as nib
 import mne
 import json
 from collections import OrderedDict
+import subprocess
 
 #make BIDS derivative directory
 pipeline_name = "TVB"
-#TVB-specific output directory
+#TVB-specific output directory: saves files in derivatives/TVB/sub-XXXX_ses-XXXX/<TVB-style output directory>
 tvb_output="TVBinput"
 os.makedirs(rawdataPath+"/"+"derivatives"+"/"+pipeline_name,exist_ok=False) # to prevent overwrite
 
@@ -56,11 +58,68 @@ with open(output_dataset_description_json, 'w') as ff:
 
 sub_vis_list = [i for i in os.listdir(resultsPath) if (os.path.isdir(resultsPath+"/"+i) & (i.startswith("sub-")))]
 
+# 0) download fsaverage HCPMMP1 annot files, create subject-specific ones
+parc="HCPMMP1"
+# NOTE: if you get permissions issues, check that you can write files to your $SUBJECTS_DIR directory. Soemtimes this is protected.
+# If you have root privileges, you should first recursively change the permissions on $SUBJECTS_DIR (e.g. sudo chmod -R 777 $SUBJECTS_DIR ), and then wget should work.
+#uncomment the following line
+#os.chmod(os.environ['SUBJECTS_DIR'],0o777)
+
+
+# 0.1) download fsaverage annot files
+# SOURCE: https://figshare.com/articles/HCP-MMP1_0_projected_on_fsaverage/3498446
+print("START: download fsaverage annot files, and script to convert to subject-space")
+wget.download("https://s3-eu-west-1.amazonaws.com/pfigshare-u-previews/5528837/preview.jpg", os.environ['SUBJECTS_DIR']+"/fsaverage/label/fsaverage_pial+HCP-MMP1.jpg")
+#wget.download("https://ndownloader.figshare.com/files/5528816", os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCP-MMP1.annot")
+#wget.download("https://ndownloader.figshare.com/files/552881", os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCP-MMP1.annot")
+#problem with rh.HCP-MMP1.annot file; use files created by our lab
+shutil.copy(misc_files_path+"/lh.HCPMMP1.annot", os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCPMMP1.annot")
+shutil.copy(misc_files_path+"/rh.HCPMMP1.annot", os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCPMMP1.annot")
+
+
+os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCP-MMP1.annot",0o777) #add execute permissions
+os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCP-MMP1.annot",0o777) #add execute permissions
+
+# 0.2) download script that converts to subject-space
+# SOURCE: https://figshare.com/articles/HCP-MMP1_0_volumetric_NIfTI_masks_in_native_structural_space/4249400/5
+wget.download("https://ndownloader.figshare.com/files/13320527", os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh")
+wget.download("https://s3-eu-west-1.amazonaws.com/pfigshare-u-previews/6928718/preview.jpg", os.environ['SUBJECTS_DIR']+"/slices.jpg")
+os.chmod(os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh",0o777) #add execute permissions
+print("START: download fsaverage annot files, and script to convert to subject-space")
+
+
+
+# 0.3) convert HCPMMP1 annotations to subject space
+# copy FreeSurferColorLUT.txt to $SUBJECTS_DIR
+shutil.copy(os.environ['FREESURFER_HOME']+"/FreeSurferColorLUT.txt", os.environ['SUBJECTS_DIR']+"/FreeSurferColorLUT.txt")
+os.chdir(rawdataPath)
+
+# write sub_vis_list to a textfile so the script "create_subj_volume_parcellation.sh" can use it
+with open(resultsPath+"/subList.txt", 'w') as f:
+    for s in sub_vis_list:
+        f.write(s + '\n')
+
+#create symbolic links to subjects' HCP FreeSurfer directories in $subjects_dir
+for i, subvis in enumerate(sub_vis_list):
+    os.symlink(resultsPath+"/"+subvis+"/T1w/"+subvis, os.environ['SUBJECTS_DIR']+"/"+subvis)
+
+os.chdir(resultsPath)
+# create directory inside results directory, called "HCPMMP1_parcellation", containing the results of this script. creates a FreeSurfer-style subject-specific parcellation of brain using HCP atlas.
+# Also creates tables with volume/thickness/etc data. This can be changedd.
+# default set to process all subjects on subList. This can be changed.
+commandTxt = "bash {}/create_subj_volume_parcellation.sh -L {}/subList.txt -a HCPMMP1 -d {} -m YES -s YES -t YES".format(os.environ['SUBJECTS_DIR'],resultsPath,"HCPMMP1_parcellation")
+print("START: create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas\n")
+print("COMMAND: "+commandTxt+"\n\n")
+subprocess.call(commandTxt, shell=True)
+print("FINISH: create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas\n")
+
+
 for subvis in sub_vis_list:
     #get subject ID and session name
     sub=subvis.split("_")[0].split("-")[1]
     visit=subvis.split("_")[1].split("-")[1]
-    session_outputdir = rawdataPath+"/"+"derivatives/TVB/"+sub+"/"+visit
+    session_outputdir = rawdataPath+"/"+"derivatives/TVB/sub-"+sub+"/ses-"+visit
+    print(session_outputdir)
     #change "flattened" directory names back into longitudinal BIDS format
     os.makedirs(session_outputdir, exist_ok=False) # to prevent overwrite
 
@@ -133,10 +192,9 @@ for subvis in sub_vis_list:
 
     #===========================================================================
     recon_all_name = subvis #Name of subject in recon_all_dir
-    recon_all_dir = resultsPath+"/"+subvis+"T1w" #Path to the recon-all results (for hcpmmp, this is "resultsPath/subject/T1w")
-    mrtrix_output_dir #Path to results of MRtrix3_connectome pipeline
-    participant_label #Participant label as in BIDS dataset, i.e. sub-<participant_label>
-    parcellation #Parcellation used in MRtrix3_connectome pipeline
+    recon_all_dir = resultsPath+"/"+subvis+"/"+"T1w" #Path to the recon-all results (for hcpmmp, this is "resultsPath/subject/T1w")
+
+
 
     # 1. create cortical surface and region mapping
     print("START: create cortical surface and region mapping")
@@ -154,7 +212,7 @@ for subvis in sub_vis_list:
     pial_tris      = np.concatenate((pial_l[3]['tris'], pial_r[3]['tris'] +  n_vert_l))
 
     #parcellation regions
-    region_names_open = open(region_names_file,"r") # EDIT PATH
+    region_names_open = open(misc_files_path+"/region_labels.txt","r") # EDIT PATH
     region_names = region_names_open.read().split('\n')
     region_names.remove("")
     assert len(region_names)==379
