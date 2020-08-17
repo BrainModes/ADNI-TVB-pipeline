@@ -87,7 +87,7 @@ os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCP-MMP1.annot",0o777) 
 wget.download("https://ndownloader.figshare.com/files/13320527", os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh")
 wget.download("https://s3-eu-west-1.amazonaws.com/pfigshare-u-previews/6928718/preview.jpg", os.environ['SUBJECTS_DIR']+"/slices.jpg")
 os.chmod(os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh",0o777) #add execute permissions
-print("START: download fsaverage annot files, and script to convert to subject-space")
+print("FINISH: download fsaverage annot files, and script to convert to subject-space")
 
 
 
@@ -122,6 +122,7 @@ for subvis in sub_vis_list:
     #get subject ID and session name
     sub=subvis.split("_")[0].split("-")[1]
     visit=subvis.split("_")[1].split("-")[1]
+    print("SUBJECT:{}, VISIT:{}".format(sub,visit))
     session_outputdir = rawdataPath+"/"+"derivatives/TVB/sub-"+sub+"/ses-"+visit
     print(session_outputdir)
     #change "flattened" directory names back into longitudinal BIDS format
@@ -644,6 +645,6 @@ for subvis in sub_vis_list:
 
     print("FINISH: save files for TVB")
     print("FINISH: create files not created by processing pipeline")
-    
+
 print("FINISH: loop through subjects")
 print("Script FINISHED.")
