@@ -8,7 +8,7 @@
 rawdataPath = "/path/to/raw" # EDIT PATH: top-level path containing BIDS-format unprocessed data
 resultsPath = "/path/to/resultsDir" # EDIT PATH: top-level path containing output of generic/batch processing
 misc_files_path = "" # EDIT PATH: location of "misc_files" directory of this repo
-HCPannotoutputPath="" # EDIT: directory in which the HCP annot output directory will be created
+HCPannotoutputPath = "" # EDIT: directory in which the HCP annot output directory will be created
 
 n_cpus=1
 
@@ -30,6 +30,7 @@ import glob
 import pandas as pd
 from subprocess import Popen, PIPE
 import nibabel.gifti as nbg
+import csv
 
 #make BIDS derivative directory
 pipeline_name = "TVB"
@@ -151,34 +152,34 @@ for subvis in sub_vis_list:
     #rsfMRI timeseries: cortical
     if os.path.isfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt"):
         shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-cortical_parc-hcpmmp1_ROI_timeseries.txt")
-        csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt")))
+        csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt")))
 
     #rsfMRI timeseries: subcortical
     if os.path.isfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"):
         shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-subcortical_parc-hcpmmp1_ROI_timeseries.txt")
-        csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity_subcortical.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"))) #check how to name subcortical variant of this file
+        csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity_subcortical.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"))) #check how to name subcortical variant of this file
 
     # PET: ABETA
     #amyloid load: left hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV45_desc_lh_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_lh_parc-hcpmmp1_pet.txt")
     #amyloid load: right hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV45_desc_rh_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_rh_parc-hcpmmp1_pet.txt")
     #amyloid load: subcortical regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV45_desc_subcortical_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_subcortical_parc-hcpmmp1_pet.txt")
 
     # PET: TAU
     #amyloid load: left hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_lh_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_lh_parc-hcpmmp1_pet.txt")
     #amyloid load: right hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_rh_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_rh_parc-hcpmmp1_pet.txt")
     #amyloid load: subcortical regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_subcortical_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_subcortical_parc-hcpmmp1_pet.txt")
 
     print("FINISH: copy & rename pipeline output files to BIDS-style derivatives directory, as well as TVB-style output directory")
 
