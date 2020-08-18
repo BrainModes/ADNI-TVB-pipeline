@@ -110,7 +110,7 @@ for i, subvis in enumerate(sub_vis_list):
 # default set to process all subjects on subList. This can be changed.
 print("START: create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas\n")
 os.chdir(HCPannotoutputPath)
-commandTxt = "bash {}/create_subj_volume_parcellation.sh -L {}/subList.txt -a HCPMMP1 -f 1 -l 3 -d {} -m YES -s YES -t YES".format(os.environ['SUBJECTS_DIR'],resultsPath,"HCPMMP1_parcellation")
+commandTxt = "bash {}/create_subj_volume_parcellation.sh -L {}/subList.txt -a HCPMMP1 -d {} -m YES -s YES -t YES".format(os.environ['SUBJECTS_DIR'],resultsPath,"HCPMMP1_parcellation")
 args=shlex.split(commandTxt)
 print("COMMAND ARGS: ",args,"\n")
 p = subprocess.Popen(args,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -219,6 +219,7 @@ for subvis in sub_vis_list:
     region_names_open = open(misc_files_path+"/region_labels.txt","r") # EDIT PATH
     region_names = region_names_open.read().split('\n')
     region_names.remove("")
+    region_names = [name.strip() for name in region_names]
     assert len(region_names)==379
     cortical = np.zeros((len(region_names))) # regions are ordered, first cortical than subcortical ones
     cortical[:360] = 1
@@ -229,6 +230,9 @@ for subvis in sub_vis_list:
     # create region map of high_res pial surface
     region_map = np.zeros((n_vert))
     n_regions = len(region_names)
+
+    for i in range(n_regions):
+        print(i,region_names[i],hemisphere[i])
 
     # load labels according to mrtrix lut order !!!
     r = 1
@@ -242,7 +246,7 @@ for subvis in sub_vis_list:
                 hemi = 'lh'
 
             label = region_names[i][prefix_len:]+regexp_append
-            label = mne.read_labels_from_annot(subject=recon_all_name, subjects_dir=recon_all_dir, hemi=hemi, regexp ="^"+label.strip(), surf_name = 'pial', parc=subvis+"_"+parc)
+            label = mne.read_labels_from_annot(subject=recon_all_name, subjects_dir=recon_all_dir, hemi=hemi, regexp ="^"+label, surf_name = 'pial', parc=subvis+"_"+parc)
             region_map[label[0].vertices + add] = r
         r += 1
 
