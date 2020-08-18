@@ -242,7 +242,7 @@ for subvis in sub_vis_list:
                 hemi = 'lh'
 
             label = region_names[i][prefix_len:]+regexp_append
-            label = mne.read_labels_from_annot(subject=recon_all_name, subjects_dir=recon_all_dir, hemi=hemi, regexp ="^"+label, surf_name = 'pial', parc=parc)
+            label = mne.read_labels_from_annot(subject=recon_all_name, subjects_dir=recon_all_dir, hemi=hemi, regexp ="^"+label.strip(), surf_name = 'pial', parc=subvis+"_"+parc)
             region_map[label[0].vertices + add] = r
         r += 1
 
