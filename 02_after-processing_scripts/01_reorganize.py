@@ -18,7 +18,6 @@ import nibabel as nib
 import mne
 import json
 from collections import OrderedDict
-import subprocess
 import shlex
 from mne.surface import _project_onto_surface
 from mne.io.constants import FIFF
