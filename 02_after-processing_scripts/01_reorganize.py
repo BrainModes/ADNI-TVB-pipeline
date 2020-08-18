@@ -27,6 +27,7 @@ import scipy.io as sio
 import sys
 import glob
 import pandas as pd
+from subprocess import Popen, PIPE
 import nibabel.gifti as nbg
 
 #make BIDS derivative directory
