@@ -10,6 +10,8 @@ resultsPath = "/path/to/resultsDir" # EDIT PATH: top-level path containing outpu
 misc_files_path = "" # EDIT PATH: location of "misc_files" directory of this repo
 HCPannotoutputPath="" # EDIT: directory in which the HCP annot output directory will be created
 
+n_cpus=1
+
 import os
 import shutil
 import wget
