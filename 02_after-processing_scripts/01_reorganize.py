@@ -34,7 +34,7 @@ import nibabel.gifti as nbg
 #make BIDS derivative directory
 pipeline_name = "TVB"
 #TVB-specific output directory: saves files in derivatives/TVB/sub-XXXX_ses-XXXX/<TVB-style output directory>
-tvb_output="TVBinput"
+tvb_input="TVBinput"
 os.makedirs(rawdataPath+"/"+"derivatives"+"/"+pipeline_name,exist_ok=False) # to prevent overwrite
 
 # create "dataset_description.json" file for derivatives directory based on corresponding
@@ -136,7 +136,7 @@ for subvis in sub_vis_list:
     session_outputdir = rawdataPath+"/"+"derivatives/TVB/sub-"+sub+"/ses-"+visit
     print(session_outputdir)
     #change "flattened" directory names back into longitudinal BIDS format
-    os.makedirs(session_outputdir, exist_ok=False) # to prevent overwrite
+    os.makedirs(session_outputdir+"/"+tvb_input, exist_ok=False) # to prevent overwrite
 
     print("START: copy & rename pipeline output files to BIDS-style derivatives directory, as well as TVB-style output directory")
     #copy & rename pipeline output files to under derivatives/sub-XXXX/ses-XXXX directory
@@ -150,12 +150,12 @@ for subvis in sub_vis_list:
 
     #rsfMRI timeseries: cortical
     if os.path.isfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt", session_outputdir+"/"+tvb_output+"/"+subvis+"_task-rest_desc-cortical_parc-hcpmmp1_ROI_timeseries.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-cortical_parc-hcpmmp1_ROI_timeseries.txt")
         csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt")))
 
     #rsfMRI timeseries: subcortical
     if os.path.isfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt", session_outputdir+"/"+tvb_output+"/"+subvis+"_task-rest_desc-subcortical_parc-hcpmmp1_ROI_timeseries.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-subcortical_parc-hcpmmp1_ROI_timeseries.txt")
         csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity_subcortical.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"))) #check how to name subcortical variant of this file
 
     # PET: ABETA
@@ -396,7 +396,7 @@ for subvis in sub_vis_list:
 
 
     # write leadfield to file in "TVBinput" subdir (derivatives/TVB/sub/ses/TVB-input)
-    sio.savemat(session_outputdir+"/"+tvb_output+"/"+subvis+"_EEGProjection.mat", mdict={'ProjectionMatrix':leadfield_new})
+    sio.savemat(session_outputdir+"/"+tvb_input+"/"+subvis+"_EEGProjection.mat", mdict={'ProjectionMatrix':leadfield_new})
 
     # leadfield for BIDS
     BIDS_eeg_folder = session_outputdir+"/eeg"
@@ -420,7 +420,7 @@ for subvis in sub_vis_list:
     idx = spatial.KDTree(vert_hires).query(vert_lores)[1]
     region_map_lores = region_map[idx]
 
-    np.savetxt(session_outputdir+"/"+tvb_output+"/"+"region_mapping.txt", region_map_lores, fmt="%i")
+    np.savetxt(session_outputdir+"/"+tvb_input+"/"+"region_mapping.txt", region_map_lores, fmt="%i")
     print("Regionmap saved !")
 
     # save in BIDS format
@@ -447,7 +447,7 @@ for subvis in sub_vis_list:
 
 
     # write cortical surface (i.e. source space) to file
-    cort_surf_path = session_outputdir+"/"+tvb_output+"/"+subvis+"_Cortex/"
+    cort_surf_path = session_outputdir+"/"+tvb_input+"/"+subvis+"_Cortex/"
     if not os.path.exists(cort_surf_path):
         os.makedirs(cort_surf_path)
 
@@ -483,7 +483,7 @@ for subvis in sub_vis_list:
         name = names[i]
         BIDS_name = BIDS_names[i]
         # make dir
-        bem_path = session_outputdir+"/"+tvb_output+"/"+subvis+"_"+name+"/"
+        bem_path = session_outputdir+"/"+tvb_input+"/"+subvis+"_"+name+"/"
         if not os.path.exists(bem_path):
             os.makedirs(bem_path)
 
@@ -516,7 +516,7 @@ for subvis in sub_vis_list:
     # for them to align with parc_image, use affine transform to bring them into ras-scanner
     eegp_loc_converted = affine_xfm.dot(np.concatenate((eegp_loc * 1000 ,np.ones((eegp_loc.shape[0],1))), axis=1).T)[:3,:].T
 
-    f = open(session_outputdir+"/"+tvb_output+"/"+subvis+"_EEG_Locations.txt", "w")
+    f = open(session_outputdir+"/"+tvb_input+"/"+subvis+"_EEG_Locations.txt", "w")
     f_bids = open(BIDS_eeg_folder+"/"+subvis+"_task-simulation_electrodes.tsv", "w")
     f_bids.write("name\tx\ty\tz\n")
     for i in range((np.array(ch_type)=="eeg").sum()): # write only "eeg" electrodes (not "misc")
@@ -527,7 +527,7 @@ for subvis in sub_vis_list:
     print("EEG locations saved  !")
 
     # create connectome.zip (has six files)
-    tvb_connectome_path = session_outputdir+"/"+tvb_output+"/"+subvis+"_Connectome/"
+    tvb_connectome_path = session_outputdir+"/"+tvb_input+"/"+subvis+"_Connectome/"
     if not os.path.exists(tvb_connectome_path):
         os.makedirs(tvb_connectome_path)
 
