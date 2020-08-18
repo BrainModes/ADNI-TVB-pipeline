@@ -149,36 +149,36 @@ for subvis in sub_vis_list:
         os.makedirs(BIDS_func_folder)
 
     #rsfMRI timeseries: cortical
-    if os.path.isfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-cortical_parc-hcpmmp1_ROI_timeseries.txt")
+    if os.path.isfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt"):
+        shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-cortical_parc-hcpmmp1_ROI_timeseries.txt")
         csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt")))
 
     #rsfMRI timeseries: subcortical
-    if os.path.isfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-subcortical_parc-hcpmmp1_ROI_timeseries.txt")
+    if os.path.isfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"):
+        shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-subcortical_parc-hcpmmp1_ROI_timeseries.txt")
         csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity_subcortical.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"))) #check how to name subcortical variant of this file
 
     # PET: ABETA
     #amyloid load: left hemispheric regions
-    if os.path.isfile(resultsPath+"/"+subvis+"PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV45_desc_lh_parc-hcpmmp1_pet.txt")
+    if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt"):
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV45_desc_lh_parc-hcpmmp1_pet.txt")
     #amyloid load: right hemispheric regions
-    if os.path.isfile(resultsPath+"/"+subvis+"PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV45_desc_rh_parc-hcpmmp1_pet.txt")
+    if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt"):
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV45_desc_rh_parc-hcpmmp1_pet.txt")
     #amyloid load: subcortical regions
-    if os.path.isfile(resultsPath+"/"+subvis+"PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV45_desc_subcortical_parc-hcpmmp1_pet.txt")
+    if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt"):
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV45_desc_subcortical_parc-hcpmmp1_pet.txt")
 
     # PET: TAU
     #amyloid load: left hemispheric regions
-    if os.path.isfile(resultsPath+"/"+subvis+"PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_lh_parc-hcpmmp1_pet.txt")
+    if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt"):
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_lh_parc-hcpmmp1_pet.txt")
     #amyloid load: right hemispheric regions
-    if os.path.isfile(resultsPath+"/"+subvis+"PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_rh_parc-hcpmmp1_pet.txt")
+    if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt"):
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_rh_parc-hcpmmp1_pet.txt")
     #amyloid load: subcortical regions
-    if os.path.isfile(resultsPath+"/"+subvis+"PET_PVC_MG/Tau/Tau.subcortical.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"PET_PVC_MG/Tau/Tau.subcortical.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_subcortical_parc-hcpmmp1_pet.txt")
+    if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt"):
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt", session_outputdir+"/pet/"+subvis+"task-rest_acq-AV1451_desc_subcortical_parc-hcpmmp1_pet.txt")
 
     print("FINISH: copy & rename pipeline output files to BIDS-style derivatives directory, as well as TVB-style output directory")
 
@@ -473,7 +473,7 @@ for subvis in sub_vis_list:
     # save in BIDS format
     darrays = [nbg.GiftiDataArray(pial_vert_converted.astype("float32"), intent="NIFTI_INTENT_POINTSET")] + [nbg.GiftiDataArray(pial_complete['tris'].astype("int32"), intent="NIFTI_INTENT_TRIANGLE")]
     gii_image = nbg.GiftiImage(darrays=darrays)
-    nbg.giftiio.write(gii_image, BIDS_anat_folder+"/sub-"+participant_label+"_space-individual_pial.surf.gii")
+    nbg.giftiio.write(gii_image, BIDS_anat_folder+"/"+subvis+"_space-individual_pial.surf.gii")
 
 
     # write BEM surfaces to file
