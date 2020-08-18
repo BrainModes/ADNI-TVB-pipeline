@@ -20,6 +20,14 @@ import json
 from collections import OrderedDict
 import subprocess
 import shlex
+from mne.surface import _project_onto_surface
+from mne.io.constants import FIFF
+from scipy import spatial
+import scipy.io as sio
+import sys
+import glob
+import pandas as pd
+import nibabel.gifti as nbg
 
 #make BIDS derivative directory
 pipeline_name = "TVB"
@@ -113,7 +121,7 @@ os.chdir(HCPannotoutputPath)
 commandTxt = "bash {}/create_subj_volume_parcellation.sh -L {}/subList.txt -a HCPMMP1 -d {} -m YES -s YES -t YES".format(os.environ['SUBJECTS_DIR'],resultsPath,"HCPMMP1_parcellation")
 args=shlex.split(commandTxt)
 print("COMMAND ARGS: ",args,"\n")
-p = subprocess.Popen(args,stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+p = Popen(args,stdout=PIPE, stderr=PIPE)
 stdout, stderr = p.communicate()
 print("FINISH: create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas\n")
 
