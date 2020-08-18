@@ -149,6 +149,10 @@ for subvis in sub_vis_list:
     if not os.path.exists(BIDS_func_folder):
         os.makedirs(BIDS_func_folder)
 
+    BIDS_pet_folder = session_outputdir+"/pet"
+    if not os.path.exists(BIDS_pet_folder):
+        os.makedirs(BIDS_pet_folder)
+
     #rsfMRI timeseries: cortical
     if os.path.isfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt"):
         shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-cortical_parc-hcpmmp1_ROI_timeseries.txt")
