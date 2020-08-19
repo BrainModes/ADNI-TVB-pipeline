@@ -591,7 +591,7 @@ for subvis in sub_vis_list:
         img_data = img.get_fdata().astype('int')
         # get the right coordinate transform to align region centroids with the surfaces
         # centers for BIDS
-        f_bids = open(session_outputdir+"/"+subvis+"_desc-centroid_morph.tsv","w") #centres.txt
+        f_bids = open(BIDS_anat_folder+"/"+subvis+"_desc-centroid_morph.tsv","w") #centres.txt
         f_bids.write("name\tcentroid-x\tcentroid-y\tcentroid-z\n")
 
         for i in range(img_data.max()):
