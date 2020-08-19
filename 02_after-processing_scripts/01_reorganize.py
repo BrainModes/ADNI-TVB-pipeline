@@ -541,9 +541,9 @@ for subvis in sub_vis_list:
     if not os.path.exists(BIDS_connectivity_folder):
         os.makedirs(BIDS_connectivity_folder)
 
-    if os.path.isfile(resultsPath+"/"+subvis+"DWI_processing/connectome_weights.csv"):
+    if os.path.isfile(resultsPath+"/"+subvis+"/DWI_processing/connectome_weights.csv"):
         # 1 weights, set diagonal to zero and make it symmetric
-        weights = np.genfromtxt(resultsPath+"/"+subvis+"DWI_processing/connectome_weights.csv")
+        weights = np.genfromtxt(resultsPath+"/"+subvis+"/DWI_processing/connectome_weights.csv")
         weights[np.diag_indices_from(weights)] = 0
         i_lower = np.tril_indices_from(weights, -1)
         weights[i_lower] = weights.T[i_lower]
@@ -558,8 +558,8 @@ for subvis in sub_vis_list:
         print("No weights file for: {}".format(subvis))
 
     # 2 tracts, set diagonal to zero and make it symmetric
-    if os.path.isfile(resultsPath+"/"+subvis+"DWI_processing/connectome_lengths.csv"):
-        tracts  = np.genfromtxt(resultsPath+"/"+subvis+"DWI_processing/connectome_lengths.csv")
+    if os.path.isfile(resultsPath+"/"+subvis+"/DWI_processing/connectome_lengths.csv"):
+        tracts  = np.genfromtxt(resultsPath+"/"+subvis+"/DWI_processing/connectome_lengths.csv")
         tracts[np.diag_indices_from(tracts)] = 0
         i_lower = np.tril_indices_from(tracts, -1)
         tracts[i_lower] = tracts.T[i_lower]
@@ -573,7 +573,7 @@ for subvis in sub_vis_list:
         print("No tracts/lengths file for: {}".format(subvis))
 
     #create JSON for structural connectome
-    if os.path.isfile(resultsPath+"/"+subvis+"DWI_processing/connectome_weights.csv") & os.path.isfile(resultsPath+"/"+subvis+"DWI_processing/connectome_lengths.csv"):
+    if os.path.isfile(resultsPath+"/"+subvis+"/DWI_processing/connectome_weights.csv") & os.path.isfile(resultsPath+"/"+subvis+"/DWI_processing/connectome_lengths.csv"):
         parcellation = hcpmmp1
         conn_json = {}
         conn_json["description"] = "Structural connectome, weights and distances (mm) derived from tractography"
@@ -587,7 +587,7 @@ for subvis in sub_vis_list:
     # create centers file
     if os.path.isfile(resultsPath+"/"+subvis+"/"+"DWI_processing/diffusion_mask_overlap2subcortical_2dwi.nii.gz"):
         # create centroids
-        img = nib.load(resultsPath+"/"+subvis+"/"+"DWI_processing/diffusion_mask_overlap2subcortical_2dwi.nii.gz")
+        img = nib.load(resultsPath+"/"+subvis+"/"+"/DWI_processing/diffusion_mask_overlap2subcortical_2dwi.nii.gz")
         img_data = img.get_fdata().astype('int')
         # get the right coordinate transform to align region centroids with the surfaces
         # centers for BIDS
