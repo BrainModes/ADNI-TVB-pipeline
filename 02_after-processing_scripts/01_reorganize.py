@@ -425,7 +425,7 @@ for subvis in sub_vis_list:
     idx = spatial.KDTree(vert_hires).query(vert_lores)[1]
     region_map_lores = region_map[idx]
 
-    np.savetxt(session_outputdir+"/"+tvb_input+"/"+"region_mapping.txt", region_map_lores, fmt="%i")
+    np.savetxt(session_outputdir+"/"+tvb_input+"/"+subvis+"region_mapping.txt", region_map_lores, fmt="%i")
     print("Regionmap saved !")
 
     # save in BIDS format
@@ -574,7 +574,7 @@ for subvis in sub_vis_list:
 
     #create JSON for structural connectome
     if os.path.isfile(resultsPath+"/"+subvis+"/DWI_processing/connectome_weights.csv") & os.path.isfile(resultsPath+"/"+subvis+"/DWI_processing/connectome_lengths.csv"):
-        parcellation = hcpmmp1
+        parcellation = "HCPMMP1"
         conn_json = {}
         conn_json["description"] = "Structural connectome, weights and distances (mm) derived from tractography"
         conn_json["source_node_info"] = {"parcellation" : parcellation}
