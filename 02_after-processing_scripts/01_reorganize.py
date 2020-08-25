@@ -69,6 +69,7 @@ data['PipelineDescription'] = {
 with open(output_dataset_description_json, 'w') as ff:
     json.dump(data, ff,sort_keys=False, indent=4)
 
+#create subvis list
 sub_vis_list = [i for i in os.listdir(resultsPath) if (os.path.isdir(resultsPath+"/"+i) & (i.startswith("sub-")))]
 
 # 0) download fsaverage HCPMMP1 annot files, create subject-specific ones
@@ -90,8 +91,10 @@ shutil.copy(misc_files_path+"/lh.HCPMMP1.annot", os.environ['SUBJECTS_DIR']+"/fs
 shutil.copy(misc_files_path+"/rh.HCPMMP1.annot", os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCPMMP1.annot")
 
 
-os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCP-MMP1.annot",0o777) #add execute permissions
-os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCP-MMP1.annot",0o777) #add execute permissions
+#os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCP-MMP1.annot",0o777) #add execute permissions
+#os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCP-MMP1.annot",0o777) #add execute permissions
+os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCPMMP1.annot",0o777) #add execute permissions
+os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCPMMP1.annot",0o777) #add execute permissions
 
 # 0.2) download script that converts to subject-space
 # SOURCE: https://figshare.com/articles/HCP-MMP1_0_volumetric_NIfTI_masks_in_native_structural_space/4249400/5
@@ -604,6 +607,7 @@ for subvis in sub_vis_list:
             f_bids.write(region_names[i]+"\t%.6f" %center[0]+"\t%.6f" %center[1]+"\t%.6f" %center[2]+"\n")
 
         f_bids.close()
+        shutil.copy(BIDS_anat_folder+"/"+subvis+"_desc-centroid_morph.tsv", tvb_connectome_path+"centres.txt")
         print("Centers saved !")
     else:
         print("No parcellation image for SC exists; centers file not created.")
@@ -629,7 +633,7 @@ for subvis in sub_vis_list:
     # 5 area
     # I'm not quite sure how to get to the exact value for the surface in mm^2
     # so for now i just count the surface vertices corresponding to each region
-    # EDIT: According to the TVB Dokumentation, this attribute is not mandatory
+    # EDIT: According to the TVB Documentation, this attribute is not mandatory
     # for the Input!
     area = np.zeros((n_regions,1))
     for i in range(n_regions):
