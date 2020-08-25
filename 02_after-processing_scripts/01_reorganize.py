@@ -428,7 +428,7 @@ for subvis in sub_vis_list:
     idx = spatial.KDTree(vert_hires).query(vert_lores)[1]
     region_map_lores = region_map[idx]
 
-    np.savetxt(session_outputdir+"/"+tvb_input+"/"+subvis+"region_mapping.txt", region_map_lores, fmt="%i")
+    np.savetxt(session_outputdir+"/"+tvb_input+"/"+subvis+"_region_mapping.txt", region_map_lores, fmt="%i")
     print("Regionmap saved !")
 
     # save in BIDS format
