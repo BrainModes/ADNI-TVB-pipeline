@@ -526,7 +526,7 @@ for subvis in sub_vis_list:
 
     f = open(session_outputdir+"/"+tvb_input+"/"+subvis+"_EEG_Locations.txt", "w")
     f_bids = open(BIDS_eeg_folder+"/"+subvis+"_task-simulation_electrodes.tsv", "w")
-    f_bids.write("name\tx\ty\tz\n")
+    #f_bids.write("name\tx\ty\tz\n") # TVB doesn't work with the heading line
     for i in range((np.array(ch_type)=="eeg").sum()): # write only "eeg" electrodes (not "misc")
         f.write(mon.ch_names[i]+" "+"%.6f" %eegp_loc_converted[i,0]+" "+"%.6f" %eegp_loc_converted[i,1]+" "+"%.6f" %eegp_loc_converted[i,2]+"\n")
         f_bids.write(mon.ch_names[i]+"\t"+"%.6f" %eegp_loc_converted[i,0]+"\t"+"%.6f" %eegp_loc_converted[i,1]+"\t"+"%.6f" %eegp_loc_converted[i,2]+"\n")
