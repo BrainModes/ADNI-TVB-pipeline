@@ -74,11 +74,12 @@ def openMINDSschemaWriter(schema_type, MINDSroot, schema_dir, schema_name, schem
         return datasetSchema(schema_type, MINDSroot, schema_dir, schema_name, schema_json, dataRoot, relatedIRI)
 
 class baseSchema:
-    def __init__(self, schema_type, MINDSroot, schema_dir, schema_name, schema_json, dataRoot):
+    def __init__(self, schema_type, MINDSroot, schema_dir, schema_name, schema_json, dataRoot, relatedIRI):
         self.schema_type = schema_type
         self.schema_dir = MINDSroot + schema_dir
         self.schema_name = schema_name
         self.schema_json = schema_json
+        self.relatedIRI = relatedIRI
         self.fileNum = str(len([file for file in os.listdir(self.schema_dir) if os.path.isfile(os.path.join(self.schema_dir, file))]) + 1).zfill(3)
     def writeJSON(self):
         #generic JSON naming scheme [<schemaName>-0X.json]. override in specific class if "name" naming required.
