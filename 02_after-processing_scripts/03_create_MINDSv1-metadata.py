@@ -13,7 +13,9 @@
 #To be done by user:
 #1. specify paths in Part I.
 #2. specify schema variants/names in Part III.
-#3. In some cases (e.g. dataset schema), due to assumptions made, the user may want to modify attributes of classes in Part II. e.g.: dataset desciption/license, or species ontologicalTerm.
+#3. In some cases (e.g. dataset schema), due to assumptions made, the user may want to modify attributes of classes in Part II. e.g.:
+# dataset desciption/license, species ontologicalTerm or the ranges of method numbers included in each activity, e.g..
+# This will differ based on individual use-case.
 
 ## I. Set-up
 #import packages, set up links, create directory structure
@@ -489,18 +491,42 @@ activity_schema = {
     "preparation":[]
 }
 
-activity_vec = ["MRI-T1w",
+activity_vec = [#acquisition
+                "MRI-T1w",
                 "MRI-T2W",
                 "MRI-T2STAR",
                 "MRI-FLAIR",
                 "resting state fMRI",
                 "DWI",
                 "PET",
+                #processing
                 "DWI-ImageProcessing",
-                "T1-imageProcessing",
+                "T1-ImageProcessing",
                 "rsfMRI-ImageProcessing"
                 "PET-ImageProcessing",
-                "PhenotypicandAssessmentData"]
+                # phenotypic data
+                "PhenotypicandAssessmentData",
+                #reorganize script/create TVB input files
+                "create cortical surface and region mapping"
+                "compute source space"
+                "compute BEM model & EEG Locations"
+                "compute forward solution"
+
+                ### OUTPUT FILES ###
+                # 5. save files for TVB
+                #"regionmap",
+                #"cortical surface zipfile"
+                #"BEM model/surfaces",
+                #"EEG locations",
+                ##   - [Weights already created]
+                ##   - [Tracts already created]
+                #"centers",
+                #"orientations",
+                #"area",
+                #"cortical",
+                #"hemisphere",
+                #"connectome zipfile"
+                ]
 #vec order important
 
 for activity_name in activity_vec:
