@@ -14,7 +14,7 @@
 #1. specify paths in Part I.
 #2. specify schema variants/names in Part III.
 #3. In some cases (e.g. dataset schema), due to assumptions made, the user may want to modify attributes of classes in Part II. e.g.:
-# dataset desciption/license, species ontologicalTerm or the ranges of method numbers included in each activity, e.g..
+# dataset desciption/license, species ontologicalTerm or the ranges of method numbers included in each activity.
 # This will differ based on individual use-case.
 
 ## I. Set-up
@@ -168,17 +168,17 @@ class activitySchema(baseSchema):
         elif self.schema_name == "PET":
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-007.json"}]
 
-        elif self.schema_name == "DWI-ImageProcessing": #(6 & 9-15)
+        elif self.schema_name == "DWI-ImageProcessing": #(method#s: 6 & 9-15)
             methodNums = [str(6).zfill(3)] \
                         + [str(i).zfill(3) for i in range(9,15+1)]
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
 
-        elif self.schema_name == "T1-imageProcessing": #(1 & 16-29)
+        elif self.schema_name == "T1-imageProcessing": #(method#s: 1 & 16-29)
             methodNums = [str(1).zfill(3)] \
                         + [str(i).zfill(3) for i in range(16,29+1)]
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
 
-        elif self.schema_name == "rsfMRI-ImageProcessing": #(5 & 8 & 30-34 & 20 & 35 & 19 & 36-40)
+        elif self.schema_name == "rsfMRI-ImageProcessing": #(method#s: 5 & 8 & 30-34 & 20 & 35 & 19 & 36-40)
             methodNums = [str(i).zfill(3) for i in [5,8]] \
                         + [str(i).zfill(3) for i in range(30,34+1)] \
                         + [str(20).zfill(3)] \
@@ -187,17 +187,38 @@ class activitySchema(baseSchema):
                         + [str(i).zfill(3) for i in range(36,40+1)]
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
 
-        elif self.schema_name == "PET-ImageProcessing": #(7 & 41-44 & 34 & 22)
+        elif self.schema_name == "PET-ImageProcessing": #(method#s: 7 & 41-44 & 34 & 22)
             methodNums = [str(7).zfill(3)] \
                         + [str(i).zfill(3) for i in range(41,44+1)] \
                         + [str(34).zfill(3)] \
                         + [str(22).zfill(3)]
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
-
-        elif self.schema_name == "PhenotypicandAssessmentData": #(45-55)
-            methodNums = [str(i).zfill(3) for i in range(45,55+1)]
+###### EDIT
+        ### not sure how far back in the pipeline to chain methods into the below activities
+        #(e.g.: when creating cortical surfaces do we need to start as far back as T1 acquisition, or just start from creating subject-specific annot files?)
+        elif self.schema_name == "create cortical surface and region mapping": #(method#s: 45-51)
+            methodNums = [str(i).zfill(3) for i in range(45,51+1)]
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
 
+        elif self.schema_name == "compute source space":
+            methodNums = [str(i).zfill(3) for i in range(52,54+1)] #(method#s: 52-54)
+            self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
+
+        elif self.schema_name == "compute BEM model & EEG Locations": #(method#s: 55-60)
+            methodNums = [str(i).zfill(3) for i in range(55,60+1)]
+            self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
+
+        elif self.schema_name == "compute forward solution": #(method#s: 61-63)
+            methodNums = [str(i).zfill(3) for i in range(61,63+1)]
+            self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
+
+        elif self.schema_name == "save derivatives accoording to TVB specifications": # (method#: 64-70)
+            methodNums = [str(i).zfill(3) for i in range(64,70+1)]
+            self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
+
+        elif self.schema_name == "PhenotypicandAssessmentData": #(method#s: 71-81)
+            methodNums = [str(i).zfill(3) for i in range(71,81+1)]
+            self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
 
         self.schema_json["preparation"] = [{"@id": "minds/core/preparation/v1.0.0/"+file} for file in os.listdir(MINDSroot + "/core/preparation/v1.0.0")]
 
@@ -315,8 +336,9 @@ for approval_name in approval_vec:
     approval.writeJSON()
 
 #### method
-#1. Depends on what scans you've taken of the subject.
-#2. In this test case, the number of methods files will depend on the analysis "condition", i.e. the number of criteria. Make one "methods" file for: T1, T2, T2STAR, FLAIR, DTI, fMRI, FieldMapping, AV45 PET, AV1451 PET
+#1. Depends on how many modalities you include / which processing stages you include.
+#2. this script includes acquisition, image processing, and creation of TVB-format files.
+#3. if user edits this, user will also need to edit "activity-methodrange" relationships in the activity schema in Part II.
 
 method_schema = {
     "@type": "",
@@ -324,7 +346,8 @@ method_schema = {
     "name": ""
 }
 
-method_vec = ["T1-weighted magnetic resonance imaging (T1w-MRI)",
+method_vec = [#acquisition
+              "T1-weighted magnetic resonance imaging (T1w-MRI)",
               "T2-weighted magnetic resonance imaging (T2w-MRI)",
               "T2star-weighted magnetic resonance imaging (T2star-MRI)",
               "FLAIR magnetic resonance imaging (FLAIR-MRI)",
@@ -378,7 +401,7 @@ method_vec = ["T1-weighted magnetic resonance imaging (T1w-MRI)",
               #"parcellation", <---use prev one
 
               #create TVB input files (45 - 70)
-              ### create cortical surface and region mapping ###
+              ### create cortical surface and region mapping ### (45-51)
               "create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas",
               "read surfaces, and convert units of the vertex positions",
               "merge left and right surfaces",
@@ -387,12 +410,12 @@ method_vec = ["T1-weighted magnetic resonance imaging (T1w-MRI)",
               "create region map of high-res pial surface",
               "remove subcortical vertices",
 
-              ### compute source space ###
+              ### compute source space ### (52-54)
               "decimate surface",
               "complete decimated surface",
               "construct source space dictionary",
 
-              ### compute BEM model + EEG Locations ###
+              ### compute BEM model + EEG Locations ### (55-60)
               "make watershed BEM"
               "make bem model",
               "make bem solution",
@@ -400,12 +423,12 @@ method_vec = ["T1-weighted magnetic resonance imaging (T1w-MRI)",
               "create info object",
               "project eeg locations onto surface",
 
-              ### compute forward solution ###
+              ### compute forward solution ### (61-63)
               "make forward solution",
               "convert forward solution",
               "remove subcortical vertices from leadfield",
 
-              ### save files for TVB"
+              ### save derivatives accoording to TVB specifications ### (64-70)
               #
               "get region map for source space (downsampled pial), via nearest neighbour interpolation",
               "create GIfTI label table",
@@ -584,7 +607,7 @@ activity_vec = [#acquisition
                 "compute source space",
                 "compute BEM model & EEG Locations",
                 "compute forward solution",
-                "save files for TVB",
+                "save derivatives accoording to TVB specifications",
 
                 # phenotypic data
                 "PhenotypicandAssessmentData"
