@@ -234,7 +234,7 @@ for subvis in sub_vis_list:
     pial_tris      = np.concatenate((pial_l[3]['tris'], pial_r[3]['tris'] +  n_vert_l))
 
     #parcellation regions
-    region_names_open = open(misc_files_path+"/region_labels.txt","r") # EDIT PATH
+    region_names_open = open(misc_files_path+"/region_labels.txt","r")
     region_names = region_names_open.read().split('\n')
     region_names.remove("")
     region_names = [name.strip() for name in region_names]
@@ -245,7 +245,7 @@ for subvis in sub_vis_list:
     prefix_len    = 0
     regexp_append="_ROI"
 
-    # create region map of high_res pial surface
+    # create region map of high-res pial surface
     region_map = np.zeros((n_vert))
     n_regions = len(region_names)
 
@@ -303,8 +303,8 @@ for subvis in sub_vis_list:
     pial_dict = {'rr':pial_dec[0], 'tris':pial_dec[1]}
     pial_complete = mne.surface.complete_surface_info(pial_dict)
 
-    # construct source space dictionary by hand
-    # use all point of the decimated surface as souce space
+    # construct source-space dictionary by hand
+    # use all points of the decimated surface as source space
     src =   {'rr':       pial_complete['rr'],
              'tris':     pial_complete['tris'],
              'ntri':     pial_complete['ntri'],
@@ -416,7 +416,7 @@ for subvis in sub_vis_list:
 
     # 5. save files for TVB
     print("START: save files for TVB")
-    # get region map for source space (ie. downsampled pial), via nearest neighbour interpolation
+    # 5.1 get region map for source space (ie. downsampled pial), via nearest neighbour interpolation
     n_vert   = pial_complete['np']
 
     region_map_lores = np.zeros((n_vert))
@@ -436,7 +436,7 @@ for subvis in sub_vis_list:
     if not os.path.exists(BIDS_anat_folder):
         os.makedirs(BIDS_anat_folder)
 
-    # create gii label table
+    # 5.2 create gii label table
     gii_labeltb = nbg.GiftiLabelTable()
 
     for i in range(len(region_names)):
@@ -454,7 +454,7 @@ for subvis in sub_vis_list:
 
 
 
-    # write cortical surface (i.e. source space) to file
+    # 5.3 write cortical surface (i.e. source space) to file
     cort_surf_path = session_outputdir+"/"+tvb_input+"/"+subvis+"_Cortex/"
     if not os.path.exists(cort_surf_path):
         os.makedirs(cort_surf_path)
@@ -484,7 +484,7 @@ for subvis in sub_vis_list:
     nbg.giftiio.write(gii_image, BIDS_anat_folder+"/"+subvis+"_space-individual_pial.surf.gii")
 
 
-    # write BEM surfaces to file
+    # 5.4 write BEM surfaces to file
     names = ["inner_skull_surface", "outer_skull_surface", "outer_skin_surface"] # "brain_surface",
     BIDS_names = ["innerskull", "outerskull", "scalp"]
     for i in range(len(names)) :
@@ -534,18 +534,18 @@ for subvis in sub_vis_list:
     f_bids.close()
     print("EEG locations saved  !")
 
-    # create connectome.zip (has six files)
+    # 5.5 create connectome.zip (has six files)
     tvb_connectome_path = session_outputdir+"/"+tvb_input+"/"+subvis+"_Connectome/"
     if not os.path.exists(tvb_connectome_path):
         os.makedirs(tvb_connectome_path)
 
-    #connectome: lengths
+    #connectome
     BIDS_connectivity_folder = session_outputdir+"/connectivity"
     if not os.path.exists(BIDS_connectivity_folder):
         os.makedirs(BIDS_connectivity_folder)
 
     if os.path.isfile(resultsPath+"/"+subvis+"/DWI_processing/connectome_weights.csv"):
-        # 1 weights, set diagonal to zero and make it symmetric
+        # 5.5.1 weights, set diagonal to zero and make it symmetric
         weights = np.genfromtxt(resultsPath+"/"+subvis+"/DWI_processing/connectome_weights.csv")
         weights[np.diag_indices_from(weights)] = 0
         i_lower = np.tril_indices_from(weights, -1)
@@ -560,7 +560,7 @@ for subvis in sub_vis_list:
     else:
         print("No weights file for: {}".format(subvis))
 
-    # 2 tracts, set diagonal to zero and make it symmetric
+    # 5.5.2 tracts, set diagonal to zero and make it symmetric
     if os.path.isfile(resultsPath+"/"+subvis+"/DWI_processing/connectome_lengths.csv"):
         tracts  = np.genfromtxt(resultsPath+"/"+subvis+"/DWI_processing/connectome_lengths.csv")
         tracts[np.diag_indices_from(tracts)] = 0
@@ -585,7 +585,7 @@ for subvis in sub_vis_list:
         with open(resultsPath+"/"+subvis+"_conndata-network_connectivity.json", 'w') as outfile:
             json.dump(conn_json, outfile)
 
-    #3. centers
+    #5.5.3 centers
     # create centroids
     # create centers file
     if os.path.isfile(resultsPath+"/"+subvis+"/"+"DWI_processing/diffusion_mask_overlap2subcortical_2dwi.nii.gz"):
@@ -612,7 +612,7 @@ for subvis in sub_vis_list:
     else:
         print("No parcellation image for SC exists; centers file not created.")
 
-    # 4 orientation
+    # 5.5.4 orientation
     # First get all Vertex-Normals corresponding to the Vertices of a Region
     # Now compute mean Vector and Normalize the Vector
     # for subcortical regions set [0,0,1]
@@ -630,7 +630,7 @@ for subvis in sub_vis_list:
     np.savetxt(tvb_connectome_path+"orientation.txt", orientation, fmt="%f")
     print("Orientations saved !")
 
-    # 5 area
+    # 5.5.5 area
     # I'm not quite sure how to get to the exact value for the surface in mm^2
     # so for now i just count the surface vertices corresponding to each region
     # EDIT: According to the TVB Documentation, this attribute is not mandatory
@@ -646,7 +646,7 @@ for subvis in sub_vis_list:
     np.savetxt(tvb_connectome_path+"area.txt", area, fmt="%f")
     print("Area saved !")
 
-    # 6 cortical
+    # 5.5.6 cortical
     # connectivity cortical/non-cortical region flags; text file containing one boolean value on each line
     # (as 0 or 1 value) being 1 when corresponding region is cortical.
     # due to error in configuring projection matrix in EEG, see monitors.py, class Projection, def config_for_sim
@@ -656,7 +656,7 @@ for subvis in sub_vis_list:
     np.savetxt(tvb_connectome_path+"cortical.txt", cortical, fmt="%i")
     print("Cortical saved !")
 
-    # 7 hemisphere
+    # 5.5.7 hemisphere
     # text file containing one boolean value on each line
     # (as 0 or 1 value) being 1 when corresponding region is in the right hemisphere and 0 when in left hemisphere.
     np.savetxt(tvb_connectome_path+"hemisphere.txt", hemisphere, fmt="%i")
