@@ -454,11 +454,6 @@ method_vec = [#acquisition
               "Montreal Cognitive Assessment",
               "Neuropsychological Battery",
               "Neuropsychiatric Inventory",
-
-
-
-
-
              ]
 #vec order important
 
