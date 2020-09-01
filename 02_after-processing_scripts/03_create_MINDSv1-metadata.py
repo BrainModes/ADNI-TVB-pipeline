@@ -417,7 +417,7 @@ method_vec = [#acquisition
               "construct source space dictionary",
 
               ### compute BEM model + EEG Locations ### (55-60)
-              "make watershed BEM"
+              "make watershed BEM",
               "make bem model",
               "make bem solution",
               "make standard montage",
@@ -429,7 +429,7 @@ method_vec = [#acquisition
               "convert forward solution",
               "remove subcortical vertices from leadfield",
 
-              ### save derivatives accoording to TVB specifications ### (64-70)
+              ### save derivatives according to TVB specifications ### (64-70)
               #
               "get region map for source space (downsampled pial), via nearest neighbour interpolation",
               "create GIfTI label table",
@@ -438,9 +438,9 @@ method_vec = [#acquisition
               "zip pial triangles, vertices, normals to create cortical surfaces zipfile",
               #
               "affine transform BEM vertices from ras-tkr coordinates (used by freesurfer) into ras-scanner",
-              "zip BEM triangles, vertices, normals to create skull surface zipfiles"
+              "zip BEM triangles, vertices, normals to create skull surface zipfiles",
               #connectome.zip
-              " zip connectome weights, tracts, centers, orientation, area, cortical, hemisphere"
+              "zip connectome weights, tracts, centers, orientation, area, cortical, hemisphere",
 
               #Phenotypic and Assessment Data (71-81)
               "Alzheimer's Disease Assessment Scale",
