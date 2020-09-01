@@ -193,9 +193,10 @@ class activitySchema(baseSchema):
                         + [str(34).zfill(3)] \
                         + [str(22).zfill(3)]
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
-###### EDIT
+
         ### not sure how far back in the pipeline to chain methods into the below activities
         #(e.g.: when creating cortical surfaces do we need to start as far back as T1 acquisition, or just start from creating subject-specific annot files?)
+        # at the moment, the previous/upstream methods have not been included.
         elif self.schema_name == "create cortical surface and region mapping": #(method#s: 45-51)
             methodNums = [str(i).zfill(3) for i in range(45,51+1)]
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
