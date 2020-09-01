@@ -218,7 +218,7 @@ class specimengroupSchema(baseSchema):
 class subjectSchema(baseSchema):
     def fillJSON(self):
         self.schema_json["@type"] = "https://schema.hbp.eu/minds/"+self.schema_type+".schema.json"
-        self.schema_json["@id"] = "minds"+ self.schema_dir.split(MINDSroot,1)[1] + "/" + self.schema_type + "-" + self.fileNum + ".json"
+        self.schema_json["@id"] = "minds"+ self.schema_dir.split(MINDSroot,1)[1] + "/" + self.schema_type + "-" + self.schema_name + ".json"
         self.schema_json["name"] = self.schema_name
         participants_tsv = pd.read_csv(BIDSroot + "/participants.tsv", sep='\t',dtype={'participant_id': str})
         self.schema_json["age"] = str(participants_tsv[participants_tsv["participant_id"]==self.schema_name]["Age"].item()) + " years"
