@@ -388,7 +388,51 @@ method_vec = ["T1-weighted magnetic resonance imaging (T1w-MRI)",
               "Mini Mental State Examination",
               "Montreal Cognitive Assessment",
               "Neuropsychological Battery",
-              "Neuropsychiatric Inventory"
+              "Neuropsychiatric Inventory",
+
+              #create TVB input files
+              ### create cortical surface and region mapping ###
+              "create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas",
+              "read surfaces, and convert units of the vertex positions",
+              "merge left and right surfaces",
+              "edit parcellation region names",
+              "assign hemisphere to each region",
+              "create region map of high-res pial surface",
+              "remove subcortical vertices",
+
+              ### compute source space ###
+              "decimate surface",
+              "complete decimated surface",
+              "construct source space dictionary",
+
+              ### compute BEM model + EEG Locations ###
+              "make watershed BEM"
+              "make bem model",
+              "make bem solution",
+              "make standard montage",
+              "create info object",
+              "project eeg locations onto surface",
+
+              ### compute forward solution ###
+              "make forward solution",
+              "convert forward solution",
+              "remove subcortical vertices from leadfield",
+
+              ### save files for TVB"
+              #
+              "get region map for source space (downsampled pial), via nearest neighbour interpolation",
+              "create GIfTI label table",
+              #
+              "affine transform surface vertices from ras-tkr coordinates (used by freesurfer) into ras-scanner",
+              "zip pial triangles, vertices, normals to create cortical surfaces zipfile",
+              #
+              "affine transform BEM vertices from ras-tkr coordinates (used by freesurfer) into ras-scanner",
+              "zip BEM triangles, vertices, normals to create skull surface zipfiles"
+              #connectome.zip
+              " zip connectome weights, tracts, centers, orientation, area, cortical, hemisphere"
+
+
+
              ]
 #vec order important
 
@@ -508,8 +552,8 @@ activity_vec = [#acquisition
                 "PhenotypicandAssessmentData",
                 #reorganize script/create TVB input files
                 "create cortical surface and region mapping"
-                "compute source space"
-                "compute BEM model & EEG Locations"
+                "compute source space",
+                "compute BEM model & EEG Locations",
                 "compute forward solution"
 
                 ### OUTPUT FILES ###
