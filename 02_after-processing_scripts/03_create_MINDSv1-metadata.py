@@ -377,20 +377,7 @@ method_vec = ["T1-weighted magnetic resonance imaging (T1w-MRI)",
               #"conversion to CIFTI format", <---use prev one
               #"parcellation", <---use prev one
 
-              #Phenotypic and Assessment Data (45-55)
-              "Alzheimer's Disease Assessment Scale",
-              "Clinical Dementia Rating Scale",
-              "Everyday Cognition - Patient",
-              "Everyday Cognition – Study Partner",
-              "Functional Activities Questionnaire",
-              "Financial Capacity Instrument",
-              "Geriatric Depression Scale - 15 item",
-              "Mini Mental State Examination",
-              "Montreal Cognitive Assessment",
-              "Neuropsychological Battery",
-              "Neuropsychiatric Inventory",
-
-              #create TVB input files
+              #create TVB input files (45 - 70)
               ### create cortical surface and region mapping ###
               "create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas",
               "read surfaces, and convert units of the vertex positions",
@@ -430,6 +417,21 @@ method_vec = ["T1-weighted magnetic resonance imaging (T1w-MRI)",
               "zip BEM triangles, vertices, normals to create skull surface zipfiles"
               #connectome.zip
               " zip connectome weights, tracts, centers, orientation, area, cortical, hemisphere"
+
+              #Phenotypic and Assessment Data (71-81)
+              "Alzheimer's Disease Assessment Scale",
+              "Clinical Dementia Rating Scale",
+              "Everyday Cognition - Patient",
+              "Everyday Cognition – Study Partner",
+              "Functional Activities Questionnaire",
+              "Financial Capacity Instrument",
+              "Geriatric Depression Scale - 15 item",
+              "Mini Mental State Examination",
+              "Montreal Cognitive Assessment",
+              "Neuropsychological Battery",
+              "Neuropsychiatric Inventory",
+
+
 
 
 
@@ -488,6 +490,34 @@ IRI_vec = ["",
               "",
               #"conversion to CIFTI format", <---use prev one
               #"parcellation", <---use prev one
+
+              #create TVB files
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
+              "",
 
               #Phenotypic and Assessment Data
               "http://uri.interlex.org/base/ilx_0346295",
@@ -548,28 +578,16 @@ activity_vec = [#acquisition
                 "T1-ImageProcessing",
                 "rsfMRI-ImageProcessing"
                 "PET-ImageProcessing",
-                # phenotypic data
-                "PhenotypicandAssessmentData",
+
                 #reorganize script/create TVB input files
                 "create cortical surface and region mapping"
                 "compute source space",
                 "compute BEM model & EEG Locations",
-                "compute forward solution"
+                "compute forward solution",
+                "save files for TVB",
 
-                ### OUTPUT FILES ###
-                # 5. save files for TVB
-                #"regionmap",
-                #"cortical surface zipfile"
-                #"BEM model/surfaces",
-                #"EEG locations",
-                ##   - [Weights already created]
-                ##   - [Tracts already created]
-                #"centers",
-                #"orientations",
-                #"area",
-                #"cortical",
-                #"hemisphere",
-                #"connectome zipfile"
+                # phenotypic data
+                "PhenotypicandAssessmentData"
                 ]
 #vec order important
 
