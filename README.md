@@ -2,7 +2,7 @@
 
 ###### Processing pipeline for multimodal imaging data from the ADNI (Alzheimer's Disease Neuroimaging Initiative) database, to be used as input to The Virtual Brain software.
 
-Each script in the "generic" directory ("generic" script) represents one part of the processing pipeline.
+Each script in the "01_processing_scripts" directory ("generic" scripts) executes one part of the image-processing pipeline.
 
 The script "00_Generate_HCPipeParams_and_BatchScripts.py" parses the raw data (nifti, BIDS-formatted) to generate batch job-submitter scripts. Each batch script calls the respective "generic" script for all subjects.
 
