@@ -338,7 +338,7 @@ for approval_name in approval_vec:
 
 #### method
 #1. Depends on how many modalities you include / which processing stages you include.
-#2. this script includes acquisition, image processing, and creation of TVB-format files.
+#2. this script includes acquisition, image processing, creation of TVB-format files & phenotypic/assessment data.
 #3. if user edits this, user will also need to edit "activity-methodrange" relationships in the activity schema in Part II.
 
 method_schema = {
