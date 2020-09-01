@@ -36,6 +36,6 @@ The folder "01_processing_scripts" contains the single subject scripts. Some of 
 ## 02_after-processing_scripts
 1. Rename and reorganize pipeline's final output files according to the BIDS specification, as well as in the format required by TVB.
 2. Create additional files required by TVB for simulation.
-3. Create MINDS v1 metadata files to describing the dataset as required by the EBRAINS Knowledge Graph. (References: https://github.com/HumanBrainProject/openMINDS, https://github.com/roopa-pai/automated_MINDSJSON-writer/blob/master/automated_MINDSJSON-writer.ipynb)
+3. Create MINDS v1 metadata files to describe the dataset as required by the EBRAINS Knowledge Graph. (References: https://github.com/HumanBrainProject/openMINDS, https://github.com/roopa-pai/automated_MINDSJSON-writer/blob/master/automated_MINDSJSON-writer.ipynb)
 
 **Required editing:** 01_reorganize.py should only require the editing of a few paths at the top of the script. 03_create_MINDSv1-metadata.py may require editing throughout the script, depending on use-case (authors, phenotype data, IRIs, etc.).
