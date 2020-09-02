@@ -205,7 +205,7 @@ class activitySchema(baseSchema):
             methodNums = [str(i).zfill(3) for i in range(52,54+1)] #(method#s: 52-54)
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
 
-        elif self.schema_name == "compute BEM model & EEG Locations": #(method#s: 55-60)
+        elif self.schema_name == "compute BEM model & EEG locations": #(method#s: 55-60)
             methodNums = [str(i).zfill(3) for i in range(55,60+1)]
             self.schema_json["methods"] = [{"@id": "minds/experiment/method/v1.0.0/method-{}.json".format(i)} for i in methodNums]
 
@@ -240,7 +240,7 @@ class specimengroupSchema(baseSchema):
 class subjectSchema(baseSchema):
     def fillJSON(self):
         self.schema_json["@type"] = "https://schema.hbp.eu/minds/"+self.schema_type+".schema.json"
-        self.schema_json["@id"] = "minds"+ self.schema_dir.split(MINDSroot,1)[1] + "/" + self.schema_type + "-" + self.schema_name + ".json"
+        self.schema_json["@id"] = "minds"+ self.schema_dir.split(MINDSroot,1)[1] + "/" + self.schema_name + ".json"
         self.schema_json["name"] = self.schema_name
         participants_tsv = pd.read_csv(BIDSroot + "/participants.tsv", sep='\t',dtype={'participant_id': str})
         self.schema_json["age"] = str(participants_tsv[participants_tsv["participant_id"]==self.schema_name]["Age"].item()) + " years"
@@ -602,7 +602,7 @@ activity_vec = [#acquisition
                 #reorganize script/create TVB input files
                 "create cortical surface and region mapping"
                 "compute source space",
-                "compute BEM model & EEG Locations",
+                "compute BEM model & EEG locations",
                 "compute forward solution",
                 "save derivatives accoording to TVB specifications",
 
