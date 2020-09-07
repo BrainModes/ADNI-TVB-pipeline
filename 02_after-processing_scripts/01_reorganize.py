@@ -662,10 +662,16 @@ for subvis in sub_vis_list:
     np.savetxt(tvb_connectome_path+"hemisphere.txt", hemisphere, fmt="%i")
     print("Hemisphere saved !")
 
-    # zip all files
+    # zip all "connectome.zip" files
     shutil.make_archive(tvb_connectome_path[:-1], 'zip', tvb_connectome_path)
     print("Connectome zipped !")
     shutil.rmtree(tvb_connectome_path)
+
+    #Zip all TVB files to indicate clearly which files are in "TVB format" and should be used for uploading to GUI
+    shutil.make_archive(session_outputdir+"/"+tvb_input, 'zip', session_outputdir+"/"+tvb_input)
+    print("All TVB input files zipped !")
+    shutil.rmtree(session_outputdir+"/"+tvb_input)
+
 
 
     print("FINISH: save files for TVB")
