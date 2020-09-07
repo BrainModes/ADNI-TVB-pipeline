@@ -31,6 +31,7 @@ import pandas as pd
 from subprocess import Popen, PIPE
 import nibabel.gifti as nbg
 import csv
+import platform
 
 #make BIDS derivative directory
 pipeline_name = "TVB"
@@ -103,7 +104,47 @@ wget.download("https://s3-eu-west-1.amazonaws.com/pfigshare-u-previews/6928718/p
 os.chmod(os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh",0o777) #add execute permissions
 print("FINISH: download fsaverage annot files, and script to convert to subject-space")
 
+#filename=os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh"
+#f = open(filename, "r")
+#contents = f.readlines()
+#f.close()
 
+#index=2
+#value="#SBATCH -D ./\n#--export=ALL\n\n"
+
+#contents.insert(index, value)
+
+#f = open(filename, "w")
+#contents = "".join(contents)
+#f.write(contents)
+#f.close()
+
+#alter "sed" command based on platform differences
+if os.name=='posix':
+    if platform.system()=='Darwin': #MacOS
+        os.system("""search=' FreeSurferColorLUT.txt'; replace=' ${SUBJECTS_DIR}/FreeSurferColorLUT.txt'; sed -i '' "s#$search#$replace#" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
+        os.system("""search='else last=`wc -l < ${subject_list_all}`;'; replace='else last=`wc -l < results/subList.txt`; last="$(echo -e "${last}" | sed -e "s/[^0-9]*//g")";'; sed -i '' "s#$search#$replace#" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
+        os.system("""search='\.\/'; replace=''; sed -i '' "s#$search#$replace#g" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
+    elif platform.system()=='Linux':
+        os.system("""search=' FreeSurferColorLUT.txt'; replace=' ${SUBJECTS_DIR}/FreeSurferColorLUT.txt'; sed -i "s#$search#$replace#" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
+        os.system("""search='else last=`wc -l < ${subject_list_all}`;'; replace='else last=`wc -l < results/subList.txt`; last="$(echo -e "${last}" | sed -e "s/[^0-9]*//g")";'; sed -i "s#$search#$replace#" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
+        os.system("""search='\.\/'; replace=''; sed -i "s#$search#$replace#g" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
+
+
+#filename=os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh"
+#f = open(filename, "r")
+#contents = f.readlines()
+#f.close()
+
+#index=86
+#value="echo 'first sub is'${first}'abc' \necho 'last sub is'${last}'abc' \necho 'subList is'${subject_list_all} \necho 'write to file' ${output_dir}/temp_subject_list_${first}_${last} \n"
+
+#contents.insert(index, value)
+
+#f = open(filename, "w")
+#contents = "".join(contents)
+#f.write(contents)
+#f.close()
 
 # 0.3) convert HCPMMP1 annotations to subject space
 # copy FreeSurferColorLUT.txt to $SUBJECTS_DIR
