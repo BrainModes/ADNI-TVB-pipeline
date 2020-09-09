@@ -199,35 +199,35 @@ for subvis in sub_vis_list:
 
     #rsfMRI timeseries: cortical
     if os.path.isfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-cortical_parc-hcpmmp1_ROI_timeseries.txt")
-        csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt")))
+        shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-cortical_atlas-"+parc+"_timeseries.txt")
+        csv.writer(open(BIDS_func_folder+"/"+subvis+"_task-rest_desc-cortical_atlas-"+parc+"_timeseries.tsv, 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt")))
 
     #rsfMRI timeseries: subcortical
     if os.path.isfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-subcortical_parc-hcpmmp1_ROI_timeseries.txt")
-        csv.writer(open(BIDS_func_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity_subcortical.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"))) #check how to name subcortical variant of this file
+        shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-subcortical_atlas-"+parc+"_timeseries.txt")
+        csv.writer(open(BIDS_func_folder+"/"+subvis+"_task-rest_desc-subcortical_atlas-"+parc+"_timeseries.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"))) #check how to name subcortical variant of this file
 
     # PET: ABETA
     #amyloid load: left hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_lh_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/L.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_lh_atlas-"+parc+"_pet.txt")
     #amyloid load: right hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_rh_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/R.Amyloid_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_rh_atlas-"+parc+"_pet.txt")
     #amyloid load: subcortical regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_subcortical_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_subcortical_atlas-"+parc+"_pet.txt")
 
     # PET: TAU
     #amyloid load: left hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_lh_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_lh_atlas-"+parc+"_pet.txt")
     #amyloid load: right hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_rh_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_rh_atlas-"+parc+"_pet.txt")
     #amyloid load: subcortical regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt"):
-        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_subcortical_parc-hcpmmp1_pet.txt")
+        shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_subcortical_atlas-"+parc+"_pet.txt")
 
     print("FINISH: copy & rename pipeline output files to BIDS-style derivatives directory, as well as TVB-style output directory")
 
@@ -256,8 +256,6 @@ for subvis in sub_vis_list:
     #===========================================================================
     recon_all_name = subvis #Name of subject in recon_all_dir
     recon_all_dir = resultsPath+"/"+subvis+"/"+"T1w" #Path to the recon-all results (for hcpmmp, this is "resultsPath/subject/T1w")
-
-
 
     # 1. create cortical surface and region mapping
     print("START: create cortical surface and region mapping")
@@ -493,8 +491,6 @@ for subvis in sub_vis_list:
     gii_image = nbg.GiftiImage(darrays=darrays, labeltable=gii_labeltb)
     nbg.giftiio.write(gii_image, BIDS_anat_folder+"/"+subvis+"_space-individual_dparc.label.gii")
 
-
-
     # 5.3 write cortical surface (i.e. source space) to file
     cort_surf_path = session_outputdir+"/"+tvb_input+"/"+subvis+"_Cortex/"
     if not os.path.exists(cort_surf_path):
@@ -557,7 +553,6 @@ for subvis in sub_vis_list:
         gii_image = nbg.GiftiImage(darrays=darrays)
         nbg.giftiio.write(gii_image, BIDS_anat_folder+"/"+subvis+"_space-individual_" + BIDS_name + ".surf.gii")
 
-
     print("BEM surfaces saved  !")
 
 
@@ -567,7 +562,7 @@ for subvis in sub_vis_list:
 
     f = open(session_outputdir+"/"+tvb_input+"/"+subvis+"_EEG_Locations.txt", "w")
     f_bids = open(BIDS_eeg_folder+"/"+subvis+"_task-simulation_electrodes.tsv", "w")
-    #f_bids.write("name\tx\ty\tz\n") # TVB doesn't work with the heading line
+    f_bids.write("name\tx\ty\tz\n")
     for i in range((np.array(ch_type)=="eeg").sum()): # write only "eeg" electrodes (not "misc")
         f.write(mon.ch_names[i]+" "+"%.6f" %eegp_loc_converted[i,0]+" "+"%.6f" %eegp_loc_converted[i,1]+" "+"%.6f" %eegp_loc_converted[i,2]+"\n")
         f_bids.write(mon.ch_names[i]+"\t"+"%.6f" %eegp_loc_converted[i,0]+"\t"+"%.6f" %eegp_loc_converted[i,1]+"\t"+"%.6f" %eegp_loc_converted[i,2]+"\n")
@@ -595,7 +590,7 @@ for subvis in sub_vis_list:
         np.savetxt(tvb_connectome_path+"weights.txt", weights, delimiter="\t")
 
         #BIDS
-        np.savetxt(BIDS_connectivity_folder+"/"+subvis+"_desc-weight_conndata-network_connectivity.tsv", weights, delimiter="\t")
+        np.savetxt(BIDS_connectivity_folder+"/"+subvis+"_desc-weight_atlas-"+parc+"_conndata-network_connectivity.tsv", weights, delimiter="\t")
 
         print("Weights saved  !")
     else:
@@ -610,7 +605,7 @@ for subvis in sub_vis_list:
         np.savetxt(tvb_connectome_path+"tract.txt", tracts, delimiter="\t")
 
         #BIDS
-        np.savetxt(BIDS_connectivity_folder+"/"+subvis+"_desc-distance_conndata-network_connectivity.tsv", tracts, delimiter="\t")
+        np.savetxt(BIDS_connectivity_folder+"/"+subvis+"_desc-distance_atlas-"+parc+"_conndata-network_connectivity.tsv", tracts, delimiter="\t")
 
         print("Tracts saved !")
     else:
@@ -623,7 +618,7 @@ for subvis in sub_vis_list:
         conn_json["description"] = "Structural connectome, weights and distances (mm) derived from tractography"
         conn_json["source_node_info"] = {"parcellation" : parcellation}
 
-        with open(resultsPath+"/"+subvis+"_conndata-network_connectivity.json", 'w') as outfile:
+        with open(resultsPath+"/"+subvis+"_atlas-"+parc+"_conndata-network_connectivity.json", 'w') as outfile:
             json.dump(conn_json, outfile)
 
     #5.5.3 centers
@@ -636,7 +631,7 @@ for subvis in sub_vis_list:
         # get the right coordinate transform to align region centroids with the surfaces
         # centers for BIDS
         f_bids = open(BIDS_anat_folder+"/"+subvis+"_desc-centroid_morph.tsv","w") #centres.txt
-        f_bids.write("name\tcentroid-x\tcentroid-y\tcentroid-z\n")
+        #f_bids.write("name\tcentroid-x\tcentroid-y\tcentroid-z\n") # TVB doesn't work with the heading line
 
         for i in range(img_data.max()):
             rows, cols, slices = np.where(img_data==i+1)
