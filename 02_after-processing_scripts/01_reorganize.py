@@ -200,7 +200,7 @@ for subvis in sub_vis_list:
     #rsfMRI timeseries: cortical
     if os.path.isfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt"):
         shutil.copyfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt", session_outputdir+"/"+tvb_input+"/"+subvis+"_task-rest_desc-cortical_atlas-"+parc+"_timeseries.txt")
-        csv.writer(open(BIDS_func_folder+"/"+subvis+"_task-rest_desc-cortical_atlas-"+parc+"_timeseries.tsv, 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt")))
+        csv.writer(open(BIDS_func_folder+"/"+subvis+"_task-rest_desc-cortical_atlas-"+parc+"_timeseries.tsv", 'w+'), delimiter='\t').writerows(csv.reader(open(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean.ptseries.txt")))
 
     #rsfMRI timeseries: subcortical
     if os.path.isfile(resultsPath+"/"+subvis+"/MNINonLinear/Results/Restingstate"+"/"+subvis+"_Restingstate_Atlas_MSMAll_hp2000_clean_subcort.ptseries.txt"):
@@ -219,13 +219,13 @@ for subvis in sub_vis_list:
         shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Amyloid/Amyloid_load.subcortical.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV45_desc_subcortical_atlas-"+parc+"_pet.txt")
 
     # PET: TAU
-    #amyloid load: left hemispheric regions
+    #tau load: left hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt"):
         shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/L.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_lh_atlas-"+parc+"_pet.txt")
-    #amyloid load: right hemispheric regions
+    #tau load: right hemispheric regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt"):
         shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/R.Tau_load_MSMAll.pscalar.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_rh_atlas-"+parc+"_pet.txt")
-    #amyloid load: subcortical regions
+    #tau load: subcortical regions
     if os.path.isfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt"):
         shutil.copyfile(resultsPath+"/"+subvis+"/PET_PVC_MG/Tau/Tau.subcortical.txt", session_outputdir+"/pet/"+subvis+"_task-rest_acq-AV1451_desc_subcortical_atlas-"+parc+"_pet.txt")
 
@@ -489,7 +489,7 @@ for subvis in sub_vis_list:
 
     darrays = [nbg.GiftiDataArray(region_map_lores.astype("int32"), intent="NIFTI_INTENT_LABEL", datatype=8)]
     gii_image = nbg.GiftiImage(darrays=darrays, labeltable=gii_labeltb)
-    nbg.giftiio.write(gii_image, BIDS_anat_folder+"/"+subvis+"_space-individual_dparc.label.gii")
+    nbg.giftiio.write(gii_image, BIDS_anat_folder+"/"+subvis+"_space-individual_dseg.label.gii")
 
     # 5.3 write cortical surface (i.e. source space) to file
     cort_surf_path = session_outputdir+"/"+tvb_input+"/"+subvis+"_Cortex/"
@@ -631,7 +631,7 @@ for subvis in sub_vis_list:
         # get the right coordinate transform to align region centroids with the surfaces
         # centers for BIDS
         f_bids = open(BIDS_anat_folder+"/"+subvis+"_desc-centroid_morph.tsv","w") #centres.txt
-        #f_bids.write("name\tcentroid-x\tcentroid-y\tcentroid-z\n") # TVB doesn't work with the heading line
+        f_bids.write("name\tcentroid-x\tcentroid-y\tcentroid-z\n") # TVB doesn't work with the heading line
 
         for i in range(img_data.max()):
             rows, cols, slices = np.where(img_data==i+1)
@@ -644,7 +644,12 @@ for subvis in sub_vis_list:
 
         f_bids.close()
         shutil.copy(BIDS_anat_folder+"/"+subvis+"_desc-centroid_morph.tsv", tvb_connectome_path+"centres.txt")
-        print("Centers saved !")
+        #remove header row for TVB-readability
+        with open(tvb_connectome_path+"centres.txt", 'r') as fin:
+            data = fin.read().splitlines(True)
+        with open(tvb_connectome_path+"centres.txt", 'w') as fout:
+            fout.writelines(data[1:])
+    print("Centers saved !")
     else:
         print("No parcellation image for SC exists; centers file not created.")
 
