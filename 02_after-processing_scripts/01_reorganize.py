@@ -71,7 +71,13 @@ with open(output_dataset_description_json, 'w') as ff:
     json.dump(data, ff,sort_keys=False, indent=4)
 
 #create subvis list
-sub_vis_list = [i for i in os.listdir(resultsPath) if (os.path.isdir(resultsPath+"/"+i) & (i.startswith("sub-")))]
+if os.path.isfile(rawdataPath+"/participants.tsv"):
+    participants = pd.read_csv(rawdataPath+"/participants.tsv", sep='\t')
+    sub_vis_list = participants.iloc[:, 0].tolist()
+else:
+    sub_vis_list = [i for i in os.listdir(resultsPath) if (os.path.isdir(resultsPath+"/"+i) & (i.startswith("sub-")))]
+
+
 
 # 0) download fsaverage HCPMMP1 annot files, create subject-specific ones
 parc="HCPMMP1"
