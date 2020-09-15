@@ -380,14 +380,22 @@ for subvis in sub_vis_list:
 
     mne.bem.make_watershed_bem(subject= recon_all_name, subjects_dir = recon_all_dir, overwrite=True)
 
+    # account for skull surfaces intersecting in some cases
+    try:
+        conductivity = (0.3, 0.006, 0.3)  # for three layers
+        model = mne.make_bem_model(subject=recon_all_name, ico=4, conductivity=conductivity, subjects_dir=recon_all_dir)
+    except RuntimeError as e: # 'RuntimeError: Surface inner skull is not completely inside surface outer skull'
+        if 'Surface inner skull is not completely inside surface outer skull' in e.args[0]:
+            print(e.args[0])
+            mne.bem.make_watershed_bem(subject= recon_all_name, subjects_dir = recon_all_dir, overwrite=True, atlas=True, gcaatlas=True, preflood=20)
+            #default preflood is 25. remove more skull by lowering this value. Use atlas info to improve segmentation.
+            conductivity = (0.3, 0.006, 0.3)  # for three layers
+            model = mne.make_bem_model(subject=recon_all_name, ico=4, conductivity=conductivity, subjects_dir=recon_all_dir)
+        else:
+            print(e.args[0])
+            raise
 
-    conductivity = (0.3, 0.006, 0.3)  # for three layers
-    model = mne.make_bem_model(subject=recon_all_name, ico=4,
-                               conductivity=conductivity,
-                               subjects_dir=recon_all_dir)
     bem = mne.make_bem_solution(model)
-
-
 
     ### GET AND ADJUST EEG LOCATIONS FROM DEFAULT CAP !!!!!!
     # This may produce implausible results if not corrected.
