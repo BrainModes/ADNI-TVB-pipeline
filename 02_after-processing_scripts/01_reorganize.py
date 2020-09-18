@@ -379,21 +379,50 @@ for subvis in sub_vis_list:
     print("START: compute BEM model + EEG Locations")
 
     mne.bem.make_watershed_bem(subject= recon_all_name, subjects_dir = recon_all_dir, overwrite=True)
+    conductivity = (0.3, 0.006, 0.3)  # for three layers
 
     # account for skull surfaces intersecting in some cases
     try:
-        conductivity = (0.3, 0.006, 0.3)  # for three layers
-        model = mne.make_bem_model(subject=recon_all_name, ico=4, conductivity=conductivity, subjects_dir=recon_all_dir)
+      model = mne.make_bem_model(subject=recon_all_name, ico=4, conductivity=conductivity, subjects_dir=recon_all_dir)
     except RuntimeError as e: # 'RuntimeError: Surface inner skull is not completely inside surface outer skull'
-        if 'Surface inner skull is not completely inside surface outer skull' in e.args[0]:
-            print(e.args[0])
-            mne.bem.make_watershed_bem(subject= recon_all_name, subjects_dir = recon_all_dir, overwrite=True, atlas=True, gcaatlas=True, preflood=20)
-            #default preflood is 25. remove more skull by lowering this value. Use atlas info to improve segmentation.
-            conductivity = (0.3, 0.006, 0.3)  # for three layers
-            model = mne.make_bem_model(subject=recon_all_name, ico=4, conductivity=conductivity, subjects_dir=recon_all_dir)
-        else:
+      if 'Surface inner skull is not completely inside surface outer skull' in e.args[0]:
+        print("preflood set to 20")
+        mne.bem.make_watershed_bem(subject= recon_all_name, subjects_dir = recon_all_dir, overwrite=True, atlas=True, gcaatlas=True, preflood=20)
+        #default preflood is 25. remove more skull by lowering this value. Use atlas info to improve segmentation.
+        try:
+          model = mne.make_bem_model(subject=recon_all_name, ico=4, conductivity=conductivity, subjects_dir=recon_all_dir)
+        except RuntimeError as e: # 'RuntimeError: Surface inner skull is not completely inside surface outer skull'
+          if 'Surface inner skull is not completely inside surface outer skull' in e.args[0]:
+            print("preflood set to 15")
+            mne.bem.make_watershed_bem(subject= recon_all_name, subjects_dir = recon_all_dir, overwrite=True, atlas=True, gcaatlas=True, preflood=15)
+            try:
+              model = mne.make_bem_model(subject=recon_all_name, ico=4, conductivity=conductivity, subjects_dir=recon_all_dir)
+            except RuntimeError as e:
+              if 'Surface inner skull is not completely inside surface outer skull' in e.args[0]:
+                print("preflood set to 10")
+                mne.bem.make_watershed_bem(subject=recon_all_name, subjects_dir=recon_all_dir, overwrite=True, atlas=True, gcaatlas=True, preflood=10)
+                try:
+                  model = mne.make_bem_model(subject=recon_all_name, ico=4, conductivity=conductivity, subjects_dir=recon_all_dir)
+                except RuntimeError as e:
+                  if 'Surface inner skull is not completely inside surface outer skull' in e.args[0]:
+                    print("preflood set to 5")
+                    mne.bem.make_watershed_bem(subject= recon_all_name, subjects_dir = recon_all_dir, overwrite=True, atlas=True, gcaatlas=True, preflood=5)
+                    try:
+                      model = mne.make_bem_model(subject=recon_all_name, ico=4, conductivity=conductivity, subjects_dir=recon_all_dir)
+                    except:
+                      print("preflood=5 didn't work. Raising error.")
+                      raise
+                  else:
+                    print(e.args[0])
+                    raise
+              else:
+                print(e.args[0])
+                raise
+          else:
             print(e.args[0])
             raise
+      else:
+        raise
 
     bem = mne.make_bem_solution(model)
 
