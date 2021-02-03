@@ -73,57 +73,61 @@ with open(output_dataset_description_json, 'w') as ff:
 #create subvis list
 if os.path.isfile(rawdataPath+"/participants.tsv"):
     participants = pd.read_csv(rawdataPath+"/participants.tsv", sep='\t')
-    sub_vis_list = participants.iloc[:, 0].tolist()
+    #sub_vis_list = participants.iloc[:, 0].tolist()
+    sub_vis_list = participants[['participant_id', 'Visit']].agg('_ses-'.join, axis=1).tolist()
 else:
     sub_vis_list = [i for i in os.listdir(resultsPath) if (os.path.isdir(resultsPath+"/"+i) & (i.startswith("sub-")))]
 
 
+parc="HCPMMP1"
 
 # 0) download fsaverage HCPMMP1 annot files, create subject-specific ones
-parc="HCPMMP1"
 # NOTE: if you get permissions issues, check that you can write files to your $SUBJECTS_DIR directory. Soemtimes this is protected.
 # If you have root privileges, you should first recursively change the permissions on $SUBJECTS_DIR (e.g. sudo chmod -R 777 $SUBJECTS_DIR ), and then wget should work.
 #uncomment the following line
 #os.chmod(os.environ['SUBJECTS_DIR'],0o777)
 
-
+print("START: download fsaverage annot files, and script to convert to subject-space")
 # 0.1) download fsaverage annot files
 # SOURCE: https://figshare.com/articles/HCP-MMP1_0_projected_on_fsaverage/3498446
-print("START: download fsaverage annot files, and script to convert to subject-space")
-wget.download("https://s3-eu-west-1.amazonaws.com/pfigshare-u-previews/5528837/preview.jpg", os.environ['SUBJECTS_DIR']+"/fsaverage/label/fsaverage_pial+HCP-MMP1.jpg")
-#wget.download("https://ndownloader.figshare.com/files/5528816", os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCP-MMP1.annot")
-#wget.download("https://ndownloader.figshare.com/files/552881", os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCP-MMP1.annot")
-#problem with rh.HCP-MMP1.annot file; use files created by our lab
-shutil.copy(misc_files_path+"/lh.HCPMMP1.annot", os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCPMMP1.annot")
-shutil.copy(misc_files_path+"/rh.HCPMMP1.annot", os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCPMMP1.annot")
+
+if not (os.path.isfile(os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCPMMP1.annot") & os.path.isfile(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCPMMP1.annot")):
+    wget.download("https://s3-eu-west-1.amazonaws.com/pfigshare-u-previews/5528837/preview.jpg", os.environ['SUBJECTS_DIR']+"/fsaverage/label/fsaverage_pial+HCP-MMP1.jpg")
+    #wget.download("https://ndownloader.figshare.com/files/5528816", os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCP-MMP1.annot")
+    #wget.download("https://ndownloader.figshare.com/files/552881", os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCP-MMP1.annot")
+    #problem with rh.HCP-MMP1.annot file; use files created by our lab
+    shutil.copy(misc_files_path+"/lh.HCPMMP1.annot", os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCPMMP1.annot")
+    shutil.copy(misc_files_path+"/rh.HCPMMP1.annot", os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCPMMP1.annot")
 
 
-#os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCP-MMP1.annot",0o777) #add execute permissions
-#os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCP-MMP1.annot",0o777) #add execute permissions
-os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCPMMP1.annot",0o777) #add execute permissions
-os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCPMMP1.annot",0o777) #add execute permissions
+    #os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCP-MMP1.annot",0o777) #add execute permissions
+    #os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCP-MMP1.annot",0o777) #add execute permissions
+    os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/lh.HCPMMP1.annot",0o777) #add execute permissions
+    os.chmod(os.environ['SUBJECTS_DIR']+"/fsaverage/label/rh.HCPMMP1.annot",0o777) #add execute permissions
 
 # 0.2) download script that converts to subject-space
 # SOURCE: https://figshare.com/articles/HCP-MMP1_0_volumetric_NIfTI_masks_in_native_structural_space/4249400/5
-wget.download("https://ndownloader.figshare.com/files/13320527", os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh")
-wget.download("https://s3-eu-west-1.amazonaws.com/pfigshare-u-previews/6928718/preview.jpg", os.environ['SUBJECTS_DIR']+"/slices.jpg")
-os.chmod(os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh",0o777) #add execute permissions
+if not os.path.isfile(os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh"):
+    wget.download("https://ndownloader.figshare.com/files/13320527", os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh")
+    wget.download("https://s3-eu-west-1.amazonaws.com/pfigshare-u-previews/6928718/preview.jpg", os.environ['SUBJECTS_DIR']+"/slices.jpg")
+    os.chmod(os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh",0o777) #add execute permissions
+
+    #filename=os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh"
+    #f = open(filename, "r")
+    #contents = f.readlines()
+    #f.close()
+
+    #index=2
+    #value="#SBATCH -D ./\n#--export=ALL\n\n"
+
+    #contents.insert(index, value)
+
+    #f = open(filename, "w")
+    #contents = "".join(contents)
+    #f.write(contents)
+    #f.close()
+
 print("FINISH: download fsaverage annot files, and script to convert to subject-space")
-
-#filename=os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh"
-#f = open(filename, "r")
-#contents = f.readlines()
-#f.close()
-
-#index=2
-#value="#SBATCH -D ./\n#--export=ALL\n\n"
-
-#contents.insert(index, value)
-
-#f = open(filename, "w")
-#contents = "".join(contents)
-#f.write(contents)
-#f.close()
 
 #alter "sed" command based on platform differences
 if os.name=='posix':
@@ -172,10 +176,11 @@ for i, subvis in enumerate(sub_vis_list):
 print("START: create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas\n")
 os.chdir(HCPannotoutputPath)
 commandTxt = "bash {}/create_subj_volume_parcellation.sh -L {}/subList.txt -a HCPMMP1 -d {} -m YES -s YES -t YES".format(os.environ['SUBJECTS_DIR'],resultsPath,"HCPMMP1_parcellation")
-args=shlex.split(commandTxt)
-print("COMMAND ARGS: ",args,"\n")
-p = Popen(args,stdout=PIPE, stderr=PIPE)
-stdout, stderr = p.communicate()
+#args=shlex.split(commandTxt)
+#print("COMMAND ARGS: ",args,"\n")
+#p = Popen(args,stdout=PIPE, stderr=PIPE)
+#stdout, stderr = p.communicate()
+os.system(commandTxt)
 print("FINISH: create a FreeSurfer-style subject-specific parcellation of subjects' brains using HCP atlas\n")
 
 print("START: loop through subjects")
@@ -692,7 +697,9 @@ for subvis in sub_vis_list:
             data = fin.read().splitlines(True)
         with open(tvb_connectome_path+"centres.txt", 'w') as fout:
             fout.writelines(data[1:])
-    print("Centers saved !")
+
+        print("Centers saved !")
+
     else:
         print("No parcellation image for SC exists; centers file not created.")
 
