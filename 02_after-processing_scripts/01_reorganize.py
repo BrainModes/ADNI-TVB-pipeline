@@ -44,8 +44,10 @@ os.makedirs(rawdataPath+"/"+"derivatives"+"/"+pipeline_name,exist_ok=False) # to
 
 # Arguments
 input_dataset_description_json = rawdataPath+'/dataset_description.json'
-output_dataset_description_json = rawdataPath+'/derivatives/TVB/dataset_description.json'
+#input_dataset_description_json = "/path/to/file" #EDIT: enter manually if datasetdescriptor file is elsewhere
+output_dataset_description_json = rawdataPath +'/derivatives/TVB/dataset_description.json'
 
+# no further edits required
 
 # 1 read the dataset_description.json from the raw data set
 with open(input_dataset_description_json, "r") as input_json:
