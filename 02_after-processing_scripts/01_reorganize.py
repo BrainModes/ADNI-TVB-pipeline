@@ -49,9 +49,24 @@ output_dataset_description_json = rawdataPath +'/derivatives/TVB/dataset_descrip
 
 # no further edits required
 
-# 1 read the dataset_description.json from the raw data set
-with open(input_dataset_description_json, "r") as input_json:
-    data = json.load(input_json)
+if os.path.exists(input_dataset_description_json):
+    # 1 read the dataset_description.json from the raw data set
+    with open(input_dataset_description_json, "r") as input_json:
+        data = json.load(input_json)
+else:
+    data = {
+    'Name': 'ADNI study',
+    'BIDSVersion': '1.0.2',
+    'License': '',
+    'Authors': '',
+    'Acknowledgements': '',
+    'HowToAcknowledge': '',
+    'Funding': '',
+    'ReferencesAndLinks': '',
+    'DatasetDOI': ''
+    }
+    with open(rawdataPath+"/dataset_description.json","w") as f:
+        json.dump(data, f, indent=4)
 
 
 # 2 prepend "TVB pipeline derivative: " to the value of the key "Name"
