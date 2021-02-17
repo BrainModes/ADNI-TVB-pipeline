@@ -184,8 +184,66 @@ with open(resultsPath+"/subList.txt", 'w') as f:
         f.write(s + '\n')
 
 # 0.5) create symbolic links to subjects' HCP FreeSurfer directories in $subjects_dir
+# function to replace symlink that avoids race condition; taken from StackOverflow:
+# https://stackoverflow.com/questions/8299386/modifying-a-symlink-in-python/55742015#55742015
+import os, tempfile
+
+def symlink(target, link_name, overwrite=False):
+    '''
+    Create a symbolic link named link_name pointing to target.
+    If link_name exists then FileExistsError is raised, unless overwrite=True.
+    When trying to overwrite a directory, IsADirectoryError is raised.
+    '''
+
+    if not overwrite:
+        os.symlink(target, link_name)
+        return
+
+    # os.replace() may fail if files are on different filesystems
+    link_dir = os.path.dirname(link_name)
+
+    # Create link to target with temporary filename
+    while True:
+        temp_link_name = tempfile.mktemp(dir=link_dir)
+
+        # os.* functions mimic as closely as possible system functions
+        # The POSIX symlink() returns EEXIST if link_name already exists
+        # https://pubs.opengroup.org/onlinepubs/9699919799/functions/symlink.html
+        try:
+            os.symlink(target, temp_link_name)
+            break
+        except FileExistsError:
+            pass
+
+    # Replace link_name with temp_link_name
+    try:
+        # Pre-empt os.replace on a directory with a nicer message
+        if not os.path.islink(link_name) and os.path.isdir(link_name):
+            raise IsADirectoryError(f"Cannot symlink over existing directory: '{link_name}'")
+        os.replace(temp_link_name, link_name)
+    except:
+        if os.path.islink(temp_link_name):
+            os.remove(temp_link_name)
+        raise
+
+#for i, subvis in enumerate(sub_vis_list):
+#    os.symlink(resultsPath+"/"+subvis+"/T1w/"+subvis, os.environ['SUBJECTS_DIR']+"/"+subvis)
 for i, subvis in enumerate(sub_vis_list):
-    os.symlink(resultsPath+"/"+subvis+"/T1w/"+subvis, os.environ['SUBJECTS_DIR']+"/"+subvis)
+    file_orig = resultsPath+"/"+subvis+"/T1w/"+subvis
+    symlink_FS = os.environ['SUBJECTS_DIR']+"/"+subvis
+
+
+    #create/update symlink
+    if (os.path.exists(symlink_FS)):
+        if (os.readlink(symlink_FS)==file_orig):
+            print("correct symlink already exists in FS directory")
+        else:
+            print("symlink exists but points to wrong file")
+            symlink(file_orig, symlink_FS, overwrite=True)
+            print("symlink_FS updated to point to correct file")
+    else:
+        print("creating symlink in FS directory")
+        os.symlink(file_orig, symlink_FS)
 
 # create directory inside results directory, called "HCPMMP1_parcellation", containing the results of this script. creates a FreeSurfer-style subject-specific parcellation of brain using HCP atlas.
 # Also creates tables with volume/thickness/etc data. This can be changedd.
