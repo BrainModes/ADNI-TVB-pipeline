@@ -152,10 +152,12 @@ if os.name=='posix':
         os.system("""search=' FreeSurferColorLUT.txt'; replace=' ${SUBJECTS_DIR}/FreeSurferColorLUT.txt'; sed -i '' "s#$search#$replace#" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
         os.system("""search='else last=`wc -l < ${subject_list_all}`;'; replace='else last=`wc -l < results/subList.txt`; last="$(echo -e "${last}" | sed -e "s/[^0-9]*//g")";'; sed -i '' "s#$search#$replace#" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
         os.system("""search='\.\/'; replace=''; sed -i '' "s#$search#$replace#g" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
+        os.system("""search='temp_subject_list_${first}_${last}\+$'; replace='${SUBJECTS_DIR}/temp_subject_list_${first}_${last}\+'; sed -i '' "s#${search}#${replace}#g" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
     elif platform.system()=='Linux':
         os.system("""search=' FreeSurferColorLUT.txt'; replace=' ${SUBJECTS_DIR}/FreeSurferColorLUT.txt'; sed -i "s#$search#$replace#" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
         os.system("""search='else last=`wc -l < ${subject_list_all}`;'; replace='else last=`wc -l < results/subList.txt`; last="$(echo -e "${last}" | sed -e "s/[^0-9]*//g")";'; sed -i "s#$search#$replace#" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
         os.system("""search='\.\/'; replace=''; sed -i "s#$search#$replace#g" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
+        os.system("""search='temp_subject_list_${first}_${last}\+$'; replace='${SUBJECTS_DIR}/temp_subject_list_${first}_${last}\+'; sed -i "s#${search}#${replace}#g" ${SUBJECTS_DIR}/create_subj_volume_parcellation.sh""")
 
 
 #filename=os.environ['SUBJECTS_DIR']+"/create_subj_volume_parcellation.sh"
@@ -225,6 +227,10 @@ def symlink(target, link_name, overwrite=False):
         if os.path.islink(temp_link_name):
             os.remove(temp_link_name)
         raise
+
+# create symlink to results directory in $SUBJECTS_DIR so that script "create_subj_volume_parcellation.sh" works
+# equivalent to: ln -s /fast/work/groups/ag_ritter/MR_processing/ADNI/Results $SUBJECTS_DIR/results
+symlink(resultsPath, os.environ['SUBJECTS_DIR']+"/results", overwrite=True)
 
 #for i, subvis in enumerate(sub_vis_list):
 #    os.symlink(resultsPath+"/"+subvis+"/T1w/"+subvis, os.environ['SUBJECTS_DIR']+"/"+subvis)
