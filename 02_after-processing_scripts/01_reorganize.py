@@ -32,6 +32,18 @@ from subprocess import Popen, PIPE
 import nibabel.gifti as nbg
 import csv
 import platform
+import datetime
+import atexit
+
+#print timem when script starts executing
+print("START: 01_reorganize.py script")
+print("datetime: {}".format(datetime.datetime.now()))
+
+#define function to log when script ends, even if due to error/failure
+def exitlog(date_and_time, error):
+    print('Script ended at date/time: %s with error %s.' % (date_and_time, error))
+
+atexit.register(exitlog, date_and_time=datetime.datetime.now(), error=Exception)
 
 #make BIDS derivative directory
 pipeline_name = "TVB"
@@ -850,4 +862,6 @@ for subvis in sub_vis_list:
     print("FINISH: create files not created by processing pipeline")
 
 print("FINISH: loop through subjects")
-print("Script FINISHED.")
+
+print("END: 01_reorganize.py script")
+print("datetime: {}".format(datetime.datetime.now()))
