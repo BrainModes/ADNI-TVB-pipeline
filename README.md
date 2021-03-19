@@ -12,6 +12,8 @@ All software/toolboxes used must be sourced before running scripts, e.g. in the 
 
 Broad steps are outlined below.
 
+It is helpful to check by visual inspection the output of every step of the pipeloine before proceeding to the next one.
+
 ## 00_Generate_HCPipeParams_and_BatchScripts.py
 
 The script "00_Generate_HCPipeParams_and_BatchScripts.py" parses the dataset, and creates a batch job-submission script for each step of the pipeline.
